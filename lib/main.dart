@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:hidden_gems_new/home_page.dart';
+import 'package:hidden_gems_new/login_page.dart';
+import 'package:hidden_gems_new/map_page.dart';
+import 'package:hidden_gems_new/profile_page.dart';
+import 'package:hidden_gems_new/setting_page.dart';
+
+main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Hidden Gem',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+      ),
+      home: const LoginPage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Widget> pages = [
+    //Här sätter jag const eftersom dem är stateless, om stateful så sätter jag inte const
+    const HomePage(),
+    MapPage(),
+    const ProfilePage(),
+    SettingsPage(),
+  ];
+
+  int currentPage=0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: pages[currentPage],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentPage,
+        selectedItemColor: Colors.black,
+  unselectedItemColor: Colors.grey,
+        onTap: (index){
+          setState(() {
+            currentPage=index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+          ),
+          label: "Home"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.map_sharp,
+          ),
+          label: "Map"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.account_circle_rounded,
+          ),
+          label: "Profile"
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.settings,
+          ),
+          label: "Settings"
+          ),
+        ]
+      ),
+    );
+  }
+}
