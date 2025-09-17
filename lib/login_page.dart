@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hidden_gems_new/main.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,9 +24,18 @@ class LoginPage extends StatelessWidget{
             Padding(padding: EdgeInsets.all(20)),
             SignInButton(
               buttonType: ButtonType.google,
-              onPressed: () {
+              onPressed: () async  {
+                await FirebaseAuth.instance.signOut();
+                await GoogleSignIn().signOut();
+
+                final googleLogIn = GoogleSignUpService();
+                final userCredential = await googleLogIn.login();
+                if(userCredential!=null){
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage())
               );
+              } else {
+                print("Login didnt work");
+              };
             }, 
           ),
           SignInButton(
