@@ -1,13 +1,28 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hidden_gems_new/firebase_options.dart';
 import 'package:hidden_gems_new/home_page.dart';
 import 'package:hidden_gems_new/login_page.dart';
 import 'package:hidden_gems_new/map_page.dart';
 import 'package:hidden_gems_new/profile_page.dart';
 import 'package:hidden_gems_new/setting_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load();
+    print("ENV loaded successfully");
+  } catch (e) {
+    print("Failed to load .env file: $e");
+  }
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
