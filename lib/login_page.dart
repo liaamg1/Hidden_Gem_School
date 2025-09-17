@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/main.dart';
 import 'package:sign_button/sign_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hidden_gems_new/auth_method.dart';
 
 class LoginPage extends StatelessWidget{
   const LoginPage({super.key});
