@@ -25,9 +25,6 @@ class LoginPage extends StatelessWidget{
             SignInButton(
               buttonType: ButtonType.google,
               onPressed: () async  {
-                await FirebaseAuth.instance.signOut();
-                await GoogleSignIn().signOut();
-
                 final googleLogIn = GoogleSignUpService();
                 final userCredential = await googleLogIn.login();
                 if(userCredential!=null){
