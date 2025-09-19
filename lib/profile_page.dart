@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hidden_gems_new/friends_list.dart';
 import 'package:hidden_gems_new/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -46,7 +47,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      debugPrint("");
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsPage()));
                     },
                     child: const Text("Friends"),
                   ),
