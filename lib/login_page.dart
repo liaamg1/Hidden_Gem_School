@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hidden_gems_new/main.dart';
 import 'package:sign_button/sign_button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hidden_gems_new/auth_method.dart';
 
 class LoginPage extends StatelessWidget{
@@ -19,7 +17,6 @@ class LoginPage extends StatelessWidget{
             Text(
               "HIDDEN GEM",
               style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
-              
               ),
             Padding(padding: EdgeInsets.all(20)),
             SignInButton(
