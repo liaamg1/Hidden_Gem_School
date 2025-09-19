@@ -17,29 +17,30 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 100
-              ),
+            const SizedBox(height: 100),
             Text("Settings view"),
-            const SizedBox(
-              height: 15
-              ),
-            ElevatedButton(onPressed: () {
-            print("");
-          }, child: const Text("Edit profile")),
+            const SizedBox(height: 15),
+            ElevatedButton(
+              onPressed: () {
+                print("");
+              },
+              child: const Text("Edit profile"),
+            ),
 
-          ElevatedButton(onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            await GoogleSignIn().signOut();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())
-            );
-          }, child: const Text("Logout"))
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                await GoogleSignIn().signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+              child: const Text("Logout"),
+            ),
           ],
         ),
-      
-    ),
-
+      ),
     );
-    
   }
 }

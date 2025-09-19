@@ -17,12 +17,9 @@ Future<void> main() async {
     print("Failed to load .env file: $e");
   }
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -55,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SettingsPage(),
   ];
 
-  int currentPage=0;
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -65,33 +62,20 @@ class _MyHomePageState extends State<MyHomePage> {
         type: BottomNavigationBarType.fixed,
         currentIndex: currentPage,
         selectedItemColor: Colors.black,
-  unselectedItemColor: Colors.grey,
-        onTap: (index){
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
           setState(() {
-            currentPage=index;
+            currentPage = index;
           });
         },
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.map_sharp), label: "Map"),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
+            icon: Icon(Icons.account_circle_rounded),
+            label: "Profile",
           ),
-          label: "Home"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.map_sharp,
-          ),
-          label: "Map"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.account_circle_rounded,
-          ),
-          label: "Profile"
-          ),
-          
-        ]
+        ],
       ),
     );
   }
