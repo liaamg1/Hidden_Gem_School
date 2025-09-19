@@ -45,9 +45,10 @@ app.*.map.json
 /android/app/release
 /android/app/google-services.json
 *.env
+android/app/src/main/AndroidManifest.xml
 
 #ios
 /ios/Runner/GoogleService-Info.plist
-
+/ios/Runner/Info.plist
 #husky
 node_modules/

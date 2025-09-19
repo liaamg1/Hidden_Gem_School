@@ -47,7 +47,10 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FriendsPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FriendsPage()),
+                      );
                     },
                     child: const Text("Friends"),
                   ),

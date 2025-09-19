@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Settings", textAlign: TextAlign.center)
+        title: Text("Settings", textAlign: TextAlign.center),
       ),
       body: Center(
         child: Column(
