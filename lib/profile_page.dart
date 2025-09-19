@@ -1,14 +1,25 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hidden_gems_new/login_page.dart';
+import 'package:hidden_gems_new/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  Center(
+    return  Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text("Temporary Text "),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings), 
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+            },
+            )
+        ],
+      ),
+      body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -27,18 +38,11 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(
             height: 15
             ),
-          ElevatedButton(onPressed: () {
-            print("");
-          }, child: const Text("Edit profile")),
-
-          ElevatedButton(onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            await GoogleSignIn().signOut();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())
-            );
-          }, child: const Text("Logout"))
+          
         ],
       ),
+    ),
     );
+    
   }
 }

@@ -90,12 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           label: "Profile"
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings,
-          ),
-          label: "Settings"
-          ),
+          
         ]
       ),
     );
