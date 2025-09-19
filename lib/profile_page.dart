@@ -6,43 +6,66 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Temporary Text "),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings), 
+            icon: const Icon(Icons.settings),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
             },
-            )
+          ),
         ],
       ),
       body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 120
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 120),
+            const CircleAvatar(
+              radius: 70,
+              backgroundImage: AssetImage(
+                'assets/images/profile_placeholder.png',
+              ),
             ),
-          const CircleAvatar(
-            radius: 70,
-            backgroundImage: AssetImage('assets/images/profile_placeholder.png'),
-          ),
-          const SizedBox(
-            height: 15
+            const SizedBox(height: 15),
+            Text(
+              "Username",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
-          Text("Username", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 15
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(width: 30),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("");
+                    },
+                    child: const Text("Friends"),
+                  ),
+                ),
+                SizedBox(width: 25),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("");
+                    },
+                    child: const Text("My Saved Gems"),
+                  ),
+                ),
+                SizedBox(width: 30),
+              ],
             ),
-          
-        ],
+          ],
+        ),
       ),
-    ),
     );
-    
   }
 }
