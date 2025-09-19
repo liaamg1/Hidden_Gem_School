@@ -12,9 +12,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await dotenv.load();
-    print("ENV loaded successfully");
   } catch (e) {
-    print("Failed to load .env file: $e");
+    debugPrint("Failed to load .env file: $e");
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

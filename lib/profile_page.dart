@@ -35,7 +35,8 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             Text(
-              "Username",style: TextStyle(fontSize:25,fontWeight:FontWeight.bold),
+              "Username",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
             Row(
@@ -45,7 +46,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      print("");
+                      debugPrint("");
                     },
                     child: const Text("Friends"),
                   ),
@@ -54,7 +55,7 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      print("");
+                      debugPrint("");
                     },
                     child: const Text("My Saved Gems"),
                   ),

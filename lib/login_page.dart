@@ -23,15 +23,15 @@ class LoginPage extends StatelessWidget {
               onPressed: () async {
                 final googleLogIn = GoogleSignUpService();
                 final userCredential = await googleLogIn.login();
+                if (!context.mounted) return;
                 if (userCredential != null) {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => MyHomePage()),
                   );
                 } else {
-                  print("Login didnt work");
+                  debugPrint("Login didnt work");
                 }
-                ;
               },
             ),
             SignInButton(

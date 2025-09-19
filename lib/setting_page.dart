@@ -22,7 +22,7 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
-                print("");
+                debugPrint("");
               },
               child: const Text("Edit profile"),
             ),
@@ -31,6 +31,7 @@ class SettingsPage extends StatelessWidget {
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 await GoogleSignIn().signOut();
+                if (!context.mounted) return;
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),
