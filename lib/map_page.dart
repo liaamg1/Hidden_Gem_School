@@ -12,10 +12,10 @@ class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
   static const LatLng karlskrona = LatLng(56.1612, 15.5869);
 
-
-  void _onMapCreated(GoogleMapController controller){
-    mapController=controller;
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
