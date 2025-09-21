@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/friends_list.dart';
 import 'package:hidden_gems_new/saved_gems_page.dart';
@@ -8,6 +9,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,15 +31,13 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 120),
-            const CircleAvatar(
+            CircleAvatar(
               radius: 70,
-              backgroundImage: AssetImage(
-                'assets/images/profile_placeholder.png',
-              ),
+              backgroundImage: NetworkImage(user!.photoURL!)
             ),
             const SizedBox(height: 15),
             Text(
-              "Username",
+              user.displayName ?? "Anonymous",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
@@ -60,7 +60,12 @@ class ProfilePage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SavedGemsPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SavedGemsPage(),
+                        ),
+                      );
                     },
                     child: const Text("My Saved Gems"),
                   ),
