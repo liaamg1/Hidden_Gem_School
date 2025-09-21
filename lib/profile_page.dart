@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
             const SizedBox(height: 120),
             CircleAvatar(
               radius: 70,
-              backgroundImage: NetworkImage(user!.photoURL!)
+              backgroundImage: NetworkImage(user!.photoURL!),
             ),
             const SizedBox(height: 15),
             Text(

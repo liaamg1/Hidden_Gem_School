@@ -28,11 +28,11 @@ final List<Gem> placeHolderGems = [
     description: "Hidden botanic garden in Rio.",
   ),
   Gem(
-  title: "Tokyo Tower best view",
-  imageUrl: "assets/images/tokyo_tower.jpg",
-  location: "35.6586, 139.7454",
-  description: "BEST VIEW SPOT FOR TOKYO",
-  )
+    title: "Tokyo Tower best view",
+    imageUrl: "assets/images/tokyo_tower.jpg",
+    location: "35.6586, 139.7454",
+    description: "BEST VIEW SPOT FOR TOKYO",
+  ),
 ];
 
 class SavedGemsPage extends StatelessWidget {
@@ -51,17 +51,22 @@ class SavedGemsPage extends StatelessWidget {
         itemCount: placeHolderGems.length,
         itemBuilder: (context, index) {
           final gem = placeHolderGems[index];
-          return Padding(padding: EdgeInsets.all(5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(gem.title, style: TextStyle(fontSize: 20)),
-              Image.asset(gem.imageUrl),
-              Text("Coordinates: ${gem.location}", style: TextStyle(fontWeight: FontWeight.bold )),
-              Text(gem.description),
-              SizedBox(height: 20,)
-            ],
-          ),);
+          return Padding(
+            padding: EdgeInsets.all(5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(gem.title, style: TextStyle(fontSize: 20)),
+                Image.asset(gem.imageUrl),
+                Text(
+                  "Coordinates: ${gem.location}",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(gem.description),
+                SizedBox(height: 20),
+              ],
+            ),
+          );
         },
       ),
     );

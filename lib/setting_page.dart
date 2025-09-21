@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hidden_gems_new/edit_profile_page.dart';
 import 'package:hidden_gems_new/login_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -22,7 +23,7 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
-                debugPrint("");
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
               },
               child: const Text("Edit profile"),
             ),

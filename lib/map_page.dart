@@ -27,16 +27,16 @@ class _MapPageState extends State<MapPage> {
         ),
         markers: {
           Marker(
-            markerId: MarkerId("Karlskrona"), 
-            position: LatLng(56.1823, 15.5893), 
-            infoWindow: InfoWindow(title: "BTH best swimming spot")
+            markerId: MarkerId("Karlskrona"),
+            position: LatLng(56.1823, 15.5893),
+            infoWindow: InfoWindow(title: "BTH best swimming spot"),
           ),
           Marker(
-            markerId: MarkerId("Torko"), 
-            position: LatLng(56.1509, 15.3979), 
-            infoWindow: InfoWindow(title: "Ronneby great hidden swimming spot")
-          )
-        }
+            markerId: MarkerId("Torko"),
+            position: LatLng(56.1509, 15.3979),
+            infoWindow: InfoWindow(title: "Ronneby great hidden swimming spot"),
+          ),
+        },
       ),
     );
   }
