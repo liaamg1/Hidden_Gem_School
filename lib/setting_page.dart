@@ -23,7 +23,10 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfilePage()),
+                );
               },
               child: const Text("Edit profile"),
             ),
