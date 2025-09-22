@@ -11,7 +11,9 @@ class LoginPage extends StatelessWidget {
     final googleLogIn = GoogleSignUpService();
     final userCredential = await googleLogIn.login();
 
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
 
     if (userCredential != null) {
       final user = userCredential.user;
@@ -32,7 +34,9 @@ class LoginPage extends StatelessWidget {
         }
       }
 
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        return;
+      }
 
       Navigator.pushReplacement(
         context,

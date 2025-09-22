@@ -28,68 +28,71 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(), 
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .snapshots(),
         builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: Text("Loading..."));
+          if (!snapshot.hasData) {
+            return const Center(child: Text("Loading..."));
           }
-        final data = snapshot.data!.data() as Map<String, dynamic>;
-        return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(height: 80),
-            CircleAvatar(
-              radius: 70,
-              backgroundImage: NetworkImage(user.photoURL!),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              data['name'] ?? "Anonymous",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              data['bio'] ?? "Default bio"
-              ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          final data = snapshot.data!.data() as Map<String, dynamic>;
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 30),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => FriendsPage()),
-                      );
-                    },
-                    child: const Text("Friends"),
-                  ),
+                const SizedBox(height: 80),
+                CircleAvatar(
+                  radius: 70,
+                  backgroundImage: NetworkImage(user.photoURL!),
                 ),
-                SizedBox(width: 25),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SavedGemsPage(),
-                        ),
-                      );
-                    },
-                    child: const Text("My Saved Gems"),
-                  ),
+                const SizedBox(height: 15),
+                Text(
+                  data['name'] ?? "Anonymous",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 30),
+                const SizedBox(height: 10),
+                Text(data['bio'] ?? "Default bio"),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 30),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FriendsPage(),
+                            ),
+                          );
+                        },
+                        child: const Text("Friends"),
+                      ),
+                    ),
+                    SizedBox(width: 25),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SavedGemsPage(),
+                            ),
+                          );
+                        },
+                        child: const Text("My Saved Gems"),
+                      ),
+                    ),
+                    SizedBox(width: 30),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      );
-      }
-      )
+          );
+        },
+      ),
     );
   }
 }
