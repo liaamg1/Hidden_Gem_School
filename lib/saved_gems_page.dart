@@ -16,7 +16,7 @@ class Gem {
 
 final List<Gem> placeHolderGems = [
   Gem(
-    title: "Karlskrona picnic spot",
+        title: "Karlskrona picnic spot",
     imageUrl: "assets/images/karlskrona.jpg",
     location: "56.1612, 15.5869",
     description: "Best picnic spot in Karlskrona.",
