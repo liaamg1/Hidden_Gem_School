@@ -30,7 +30,7 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(height: 120),
+            const SizedBox(height: 80),
             CircleAvatar(
               radius: 70,
               backgroundImage: NetworkImage(user!.photoURL!),
@@ -40,6 +40,8 @@ class ProfilePage extends StatelessWidget {
               user.displayName ?? "Anonymous",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 10),
+            Text("This is your bio"),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
