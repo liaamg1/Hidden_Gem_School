@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/friends_list.dart';
@@ -26,22 +27,31 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(), 
+        builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: Text("Loading..."));
+          }
+        final data = snapshot.data!.data() as Map<String, dynamic>;
+        return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 80),
             CircleAvatar(
               radius: 70,
-              backgroundImage: NetworkImage(user!.photoURL!),
+              backgroundImage: NetworkImage(user.photoURL!),
             ),
             const SizedBox(height: 15),
             Text(
-              user.displayName ?? "Anonymous",
+              data['name'] ?? "Anonymous",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text("This is your bio"),
+            Text(
+              data['bio'] ?? "Default bio"
+              ),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -77,7 +87,9 @@ class ProfilePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      );
+      }
+      )
     );
   }
 }
