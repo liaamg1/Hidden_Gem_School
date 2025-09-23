@@ -7,7 +7,7 @@ class EditProfilePage extends StatelessWidget {
   EditProfilePage({super.key});
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
-
+  
   Future<void> _saveProfile(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -24,6 +24,7 @@ class EditProfilePage extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+    //Reused code from profile page
     final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(title: const Text('Edit Username')),
@@ -42,8 +43,6 @@ class EditProfilePage extends StatelessWidget {
         return Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          
-
           children: [
             TextField(
               controller: nameController,
