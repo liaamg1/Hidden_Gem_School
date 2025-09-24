@@ -30,10 +30,7 @@ class HomePage extends StatelessWidget {
                 "This is your home page.\n"
                 "Enjoy exploring the app.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.black),
               ),
             ],
           ),
