@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Temporary Text "),
+        title: const Text("Profile View"),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

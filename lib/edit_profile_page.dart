@@ -34,8 +34,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (user == null) {
       return;
     }
+    
 
-    String? photoURL;
+    String? photoURL = (await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get())
+      .data()?['photoURL'];
+      
     if (_image != null) {
       final storageRef = FirebaseStorage.instance.ref().child(
         "profile_pics/${user.uid}.jpg",
@@ -47,7 +53,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
       'name': nameController.text.trim(),
       'bio': bioController.text.trim(),
-      'photoURL': photoURL,
+      'photoURL': photoURL
     }, SetOptions(merge: true));
 
     if (!context.mounted) {
@@ -85,16 +91,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: _image != null
-                        ? FileImage(_image!)
-                        : (data['photoURL'] != null
-                              ? NetworkImage(data['photoURL'])
-                              : const AssetImage(
-                                      "assets/images/profile_placeholder.png",
-                                    )
-                                    as ImageProvider),
+                    ? FileImage(_image!)
+                    : NetworkImage(data['photoURL']),
                   ),
                 ),
-
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: 'Name'),
