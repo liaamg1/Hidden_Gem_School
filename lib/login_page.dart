@@ -23,14 +23,14 @@ class LoginPage extends StatelessWidget {
         final userDoc = await usersRef.doc(user.uid).get();
 
         if (!userDoc.exists) {
-        await usersRef.doc(user.uid).set({
-          'name': user.displayName ?? '',
-          'email': user.email ?? '',
-          'photoURL': user.photoURL ?? '',
-          'bio': 'This is your bio',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
+          await usersRef.doc(user.uid).set({
+            'name': user.displayName ?? '',
+            'email': user.email ?? '',
+            'photoURL': user.photoURL ?? '',
+            'bio': 'This is your bio',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
       }
 
       if (!context.mounted) {

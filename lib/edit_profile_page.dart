@@ -18,6 +18,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final TextEditingController bioController = TextEditingController();
   File? _image;
+  bool _initialized = false;
 
   Future<void> _pickImage(BuildContext context) async {
     final imagePicker = ImagePicker();
@@ -78,8 +79,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
             return const Center(child: Text("Loading..."));
           }
           final data = snapshot.data!.data() as Map<String, dynamic>;
-          bioController.text = data['bio'] ?? '';
-          nameController.text = data['name'] ?? '';
+          if (!_initialized) {
+            bioController.text = data['bio'] ?? '';
+            nameController.text = data['name'] ?? '';
+            _initialized = true;
+          }
           return Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
