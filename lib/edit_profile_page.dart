@@ -1,25 +1,59 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
-class EditProfilePage extends StatelessWidget {
-  EditProfilePage({super.key});
+class EditProfilePage extends StatefulWidget {
+  const EditProfilePage({super.key});
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController nameController = TextEditingController();
+
   final TextEditingController bioController = TextEditingController();
+  File? _image;
+
+  Future<void> _pickImage(BuildContext context) async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      setState(() => _image = File(pickedImage.path));
+    }
+  }
 
   Future<void> _saveProfile(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'name': nameController.text.trim(),
-        'bio': bioController.text.trim(),
-      }, SetOptions(merge: true));
-
-      if (!context.mounted) {
-        return;
-      }
-      Navigator.pop(context);
+    if (user == null) {
+      return;
     }
+
+    String? photoURL;
+    if (_image != null) {
+      final storageRef = FirebaseStorage.instance.ref().child(
+        "profile_pics/${user.uid}.jpg",
+      );
+      await storageRef.putFile(_image!);
+      photoURL = await storageRef.getDownloadURL();
+    }
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'name': nameController.text.trim(),
+      'bio': bioController.text.trim(),
+      'photoURL': photoURL,
+    }, SetOptions(merge: true));
+
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.pop(context);
   }
 
   @override
@@ -44,6 +78,23 @@ class EditProfilePage extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
+                GestureDetector(
+                  onTap: () {
+                    _pickImage(context);
+                  },
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image != null
+                        ? FileImage(_image!)
+                        : (data['photoURL'] != null
+                              ? NetworkImage(data['photoURL'])
+                              : const AssetImage(
+                                      "assets/images/profile_placeholder.png",
+                                    )
+                                    as ImageProvider),
+                  ),
+                ),
+
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: 'Name'),
