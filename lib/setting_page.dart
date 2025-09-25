@@ -19,7 +19,6 @@ class SettingsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: 100),
-            Text("Settings view"),
             const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {

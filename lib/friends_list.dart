@@ -18,6 +18,8 @@ class FriendsPage extends StatelessWidget {
         itemCount: placeholderFriends.length,
         itemBuilder: (context, index) {
           return ListTile(
+            leading: CircleAvatar(
+              child: Text(placeholderFriends[index][0])),
             title: Text(
               placeholderFriends[index],
               style: TextStyle(fontSize: 20),

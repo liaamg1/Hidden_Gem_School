@@ -68,7 +68,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     //Reused code from profile page
     final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Username')),
+      appBar: AppBar(title: const Text('Edit profile')),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
