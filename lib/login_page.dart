@@ -20,18 +20,17 @@ class LoginPage extends StatelessWidget {
 
       if (user != null) {
         final usersRef = FirebaseFirestore.instance.collection('users');
+        final userDoc = await usersRef.doc(user.uid).get();
 
-        try {
-          await usersRef.doc(user.uid).set({
-            'name': user.displayName ?? '',
-            'email': user.email ?? '',
-            'photoURL': user.photoURL ?? '',
-            'bio': 'This is your bio',
-            'createdAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
-        } catch (e) {
-          debugPrint('Firestore write failed');
-        }
+        if (!userDoc.exists) {
+        await usersRef.doc(user.uid).set({
+          'name': user.displayName ?? '',
+          'email': user.email ?? '',
+          'photoURL': user.photoURL ?? '',
+          'bio': 'This is your bio',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
       }
 
       if (!context.mounted) {
