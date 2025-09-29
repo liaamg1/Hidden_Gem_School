@@ -20,6 +20,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _image;
   bool _initialized = false;
 
+  @override
+  void dispose() {
+    nameController.dispose();
+    bioController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage(BuildContext context) async {
     final imagePicker = ImagePicker();
     final pickedImage = await imagePicker.pickImage(

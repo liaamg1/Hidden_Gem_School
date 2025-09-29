@@ -7,6 +7,7 @@ import 'package:hidden_gems_new/map_page.dart';
 import 'package:hidden_gems_new/profile_page.dart';
 import 'package:hidden_gems_new/setting_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hidden_gems_new/upload_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //Här sätter jag const eftersom dem är stateless, om stateful så sätter jag inte const
     const HomePage(),
     MapPage(),
+    const UploadPage(),
     const ProfilePage(),
     SettingsPage(),
   ];
@@ -70,10 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.map_sharp), label: "Map"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_rounded),
-            label: "Profile",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Upload"),
+          BottomNavigationBarItem(icon: Icon(Icons.account_circle_rounded),label: "Profile"),
         ],
       ),
     );
