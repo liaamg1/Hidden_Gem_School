@@ -11,12 +11,8 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Upload Hidden Gem"),
-
-      ),
-      body: Center()
+      appBar: AppBar(centerTitle: true, title: Text("Upload Hidden Gem")),
+      body: Center(),
     );
   }
 }

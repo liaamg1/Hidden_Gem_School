@@ -73,7 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.map_sharp), label: "Map"),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: "Upload"),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle_rounded),label: "Profile"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_rounded),
+            label: "Profile",
+          ),
         ],
       ),
     );
