@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hidden_gems_new/firebase_options.dart';
-import 'package:hidden_gems_new/home_page.dart';
-import 'package:hidden_gems_new/login_page.dart';
-import 'package:hidden_gems_new/map_page.dart';
-import 'package:hidden_gems_new/profile_page.dart';
-import 'package:hidden_gems_new/setting_page.dart';
+import 'package:hidden_gems_new/services/firebase_options.dart';
+import 'package:hidden_gems_new/features/home/home_page.dart';
+import 'package:hidden_gems_new/features/auth/login_page.dart';
+import 'package:hidden_gems_new/features/gems/map_page.dart';
+import 'package:hidden_gems_new/features/profile/profile_page.dart';
+import 'package:hidden_gems_new/features/profile/setting_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hidden_gems_new/upload_page.dart';
+import 'package:hidden_gems_new/features/gems/upload_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hidden_gems_new/friends_list.dart';
-import 'package:hidden_gems_new/saved_gems_page.dart';
-import 'package:hidden_gems_new/setting_page.dart';
+import 'package:hidden_gems_new/features/profile/friends_list.dart';
+import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
+import 'package:hidden_gems_new/features/profile/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

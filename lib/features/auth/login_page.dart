@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/main.dart';
-import 'package:hidden_gems_new/auth_method.dart';
+import 'package:hidden_gems_new/services/auth_method.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
