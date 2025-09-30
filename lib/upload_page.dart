@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -11,6 +13,25 @@ class _UploadPageState extends State<UploadPage> {
   bool private = true;
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
+  Future<void> _uploadPost() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .collection('posts')
+        .add({
+          'title': titleController.text.trim(),
+          'description': descriptionController.text.trim(),
+          'private': private,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+    titleController.clear();
+    descriptionController.clear();
+    setState(() => private = true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +96,9 @@ class _UploadPageState extends State<UploadPage> {
               ElevatedButton.icon(
                 icon: Icon(Icons.upload_file, size: 30),
                 label: const Text("Upload"),
-                onPressed: () {},
+                onPressed: () {
+                  _uploadPost();
+                },
               ),
             ],
           ),
