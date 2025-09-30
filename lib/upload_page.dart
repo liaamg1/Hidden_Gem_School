@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -14,6 +15,35 @@ class _UploadPageState extends State<UploadPage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  Position? _currentPosition;
+
+  //Took code from https://pub.dev/packages/geolocator, I understand everything and would have written it the same way.
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
   Future<void> _uploadPost() async {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -25,6 +55,10 @@ class _UploadPageState extends State<UploadPage> {
           'title': titleController.text.trim(),
           'description': descriptionController.text.trim(),
           'private': private,
+          'location': GeoPoint(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+          ),
           'createdAt': FieldValue.serverTimestamp(),
         });
 
@@ -65,7 +99,16 @@ class _UploadPageState extends State<UploadPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final pos = await _determinePosition();
+                        setState(() {
+                          _currentPosition = pos;
+                        });
+                        //Testing if position system is working
+                        debugPrint(
+                          "Current position: Lat=${pos.latitude}, Lng=${pos.longitude}",
+                        );
+                      },
                       icon: const Icon(Icons.my_location),
                       label: const Text("Use current location"),
                     ),
