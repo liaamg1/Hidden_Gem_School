@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -16,8 +17,63 @@ class _UploadPageState extends State<UploadPage> {
   final TextEditingController descriptionController = TextEditingController();
 
   Position? _currentPosition;
+  LatLng? _currentChosenPosition;
 
-  //Took code from https://pub.dev/packages/geolocator, I understand everything and would have written it the same way.
+  void showMap(BuildContext context) {
+    Marker? currentMarker;
+
+    //followed tutorial from https://api.flutter.dev/flutter/widgets/StatefulBuilder-class.html for statefulbuilder
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            content: SizedBox(
+              width: 500,
+              height: 500,
+              //Reused some code from the map page.
+              child: GoogleMap(
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(56.1612, 15.5869),
+                  zoom: 11.0,
+                ),
+                onTap: (LatLng pos) {
+                  setState(() {
+                    currentMarker = Marker(
+                      markerId: const MarkerId("ChosenMarker"),
+                      position: pos,
+                    );
+                  });
+                },
+                markers: currentMarker != null ? {currentMarker!} : {},
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (currentMarker != null) {
+                    setState(() {
+                      _currentChosenPosition = currentMarker?.position;
+                      _currentPosition = null;
+                    });
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  //Took code from https://pub.dev/packages/geolocator, I would have written it the same way, so I saved time.
+
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -43,6 +99,7 @@ class _UploadPageState extends State<UploadPage> {
 
     return await Geolocator.getCurrentPosition();
   }
+  //TO HERE
 
   Future<void> _uploadPost() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -56,8 +113,10 @@ class _UploadPageState extends State<UploadPage> {
           'description': descriptionController.text.trim(),
           'private': private,
           'location': GeoPoint(
-            _currentPosition!.latitude,
-            _currentPosition!.longitude,
+            _currentPosition?.latitude ?? _currentChosenPosition?.latitude ?? 0,
+            _currentPosition?.longitude ??
+                _currentChosenPosition?.longitude ??
+                0,
           ),
           'createdAt': FieldValue.serverTimestamp(),
         });
@@ -103,6 +162,7 @@ class _UploadPageState extends State<UploadPage> {
                         final pos = await _determinePosition();
                         setState(() {
                           _currentPosition = pos;
+                          _currentChosenPosition = null;
                         });
                         //Testing if position system is working
                         debugPrint(
@@ -116,7 +176,9 @@ class _UploadPageState extends State<UploadPage> {
                   const SizedBox(width: 15),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        showMap(context);
+                      },
                       icon: const Icon(Icons.map),
                       label: const Text("Choose location on map"),
                     ),
