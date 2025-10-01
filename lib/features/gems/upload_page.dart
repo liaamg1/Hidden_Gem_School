@@ -136,6 +136,35 @@ class _UploadPageState extends State<UploadPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.upload),
+                      label: const Text("Upload image"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.camera),
+                      label: const Text("Take picture"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(
@@ -171,6 +200,10 @@ class _UploadPageState extends State<UploadPage> {
                       },
                       icon: const Icon(Icons.my_location),
                       label: const Text("Use current location"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -181,6 +214,10 @@ class _UploadPageState extends State<UploadPage> {
                       },
                       icon: const Icon(Icons.map),
                       label: const Text("Choose location on map"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -201,6 +238,10 @@ class _UploadPageState extends State<UploadPage> {
               ElevatedButton.icon(
                 icon: Icon(Icons.upload_file, size: 30),
                 label: const Text("Upload"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
                 onPressed: () {
                   _uploadPost();
                 },
