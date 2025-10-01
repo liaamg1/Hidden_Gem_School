@@ -19,11 +19,11 @@ class _UploadPageState extends State<UploadPage> {
   Position? _currentPosition;
   LatLng? _currentChosenPosition;
 
-  void showMap(BuildContext context) {
+  Future<LatLng?> showMap(BuildContext context) async {
     Marker? currentMarker;
 
     //followed tutorial from https://api.flutter.dev/flutter/widgets/StatefulBuilder-class.html for statefulbuilder
-    showDialog(
+    return showDialog<LatLng>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
@@ -50,18 +50,14 @@ class _UploadPageState extends State<UploadPage> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context, null),
                 child: const Text('Cancel'),
               ),
               TextButton(
                 onPressed: () {
                   if (currentMarker != null) {
-                    setState(() {
-                      _currentChosenPosition = currentMarker?.position;
-                      _currentPosition = null;
-                    });
+                    Navigator.pop(context, currentMarker?.position);
                   }
-                  Navigator.pop(context);
                 },
                 child: const Text('Save'),
               ),
@@ -183,6 +179,11 @@ class _UploadPageState extends State<UploadPage> {
                 ),
               ),
               SizedBox(height: 20),
+              Text(
+                _currentChosenPosition != null
+                    ? "  Chosen position\nlatitude: ${_currentChosenPosition?.latitude}\nLongitude: ${_currentChosenPosition?.longitude}"
+                    : "  Chosen position\nlatitude: ${_currentPosition?.latitude}\nLongitude: ${_currentPosition?.longitude}",
+              ),
               Row(
                 children: [
                   Expanded(
@@ -209,8 +210,12 @@ class _UploadPageState extends State<UploadPage> {
                   const SizedBox(width: 15),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        showMap(context);
+                      onPressed: () async {
+                        final chosenPosition = await showMap(context);
+                        setState(() {
+                          _currentPosition = null;
+                          _currentChosenPosition = chosenPosition;
+                        });
                       },
                       icon: const Icon(Icons.map),
                       label: const Text("Choose location on map"),
