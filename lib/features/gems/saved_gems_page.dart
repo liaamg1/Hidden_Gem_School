@@ -1,42 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Gem {
-  final String title;
-  final String imageUrl;
-  final String location;
-  final String description;
+class SavedGemsPage extends StatefulWidget {
+  const SavedGemsPage({super.key});
 
-  Gem({
-    required this.title,
-    required this.imageUrl,
-    required this.location,
-    required this.description,
-  });
+  @override
+  State<SavedGemsPage> createState() => _SavedGemsPageState();
 }
 
-final List<Gem> placeHolderGems = [
-  Gem(
-    title: "Karlskrona picnic spot",
-    imageUrl: "assets/images/karlskrona.jpg",
-    location: "56.1612, 15.5869",
-    description: "Best picnic spot in Karlskrona.",
-  ),
-  Gem(
-    title: "Rio de Janeiro best view",
-    imageUrl: "assets/images/rio.jpg",
-    location: "-22.9068, -43.1729",
-    description: "Hidden botanic garden in Rio.",
-  ),
-  Gem(
-    title: "Tokyo Tower best view",
-    imageUrl: "assets/images/tokyo_tower.jpg",
-    location: "35.6586, 139.7454",
-    description: "BEST VIEW SPOT FOR TOKYO",
-  ),
-];
+class _SavedGemsPageState extends State<SavedGemsPage> {
+  final user = FirebaseAuth.instance.currentUser;
+  late List<Map<String, dynamic>> items;
+  bool isInitialized = false;
+  Future<void> getSavedGems() async {
+    List<Map<String, dynamic>> tempList = [];
 
-class SavedGemsPage extends StatelessWidget {
-  const SavedGemsPage({super.key});
+    var data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .collection('posts')
+        .get();
+
+    for (var element in data.docs) {
+      tempList.add(element.data());
+    }
+    setState(() {
+      items = tempList;
+      isInitialized = true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSavedGems();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,29 +45,32 @@ class SavedGemsPage extends StatelessWidget {
         centerTitle: true,
         title: Text("My Saved Gems", textAlign: TextAlign.center),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(8),
-        itemCount: placeHolderGems.length,
-        itemBuilder: (context, index) {
-          final gem = placeHolderGems[index];
-          return Padding(
-            padding: EdgeInsets.all(5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(gem.title, style: TextStyle(fontSize: 20)),
-                Image.asset(gem.imageUrl),
-                Text(
-                  "Coordinates: ${gem.location}",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(gem.description),
-                SizedBox(height: 20),
-              ],
-            ),
-          );
-        },
-      ),
+      body: isInitialized
+          ? ListView.builder(
+              padding: EdgeInsets.all(8),
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final gem = items[index];
+                final location = gem['location'] as GeoPoint;
+                return Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(gem['title'], style: TextStyle(fontSize: 20)),
+                      //Image.asset(gem.imageUrl),
+                      Text(
+                        "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(gem['description']),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                );
+              },
+            )
+          : Text("no data"),
     );
   }
 }
