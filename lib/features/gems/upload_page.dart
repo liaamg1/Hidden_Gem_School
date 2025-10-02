@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -18,6 +22,17 @@ class _UploadPageState extends State<UploadPage> {
 
   Position? _currentPosition;
   LatLng? _currentChosenPosition;
+  //reused code from edit_profile_page
+  File? _image;
+  Future<void> _pickImage(BuildContext context) async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      setState(() => _image = File(pickedImage.path));
+    }
+  }
 
   Future<LatLng?> showMap(BuildContext context) async {
     Marker? currentMarker;
@@ -99,8 +114,8 @@ class _UploadPageState extends State<UploadPage> {
 
   Future<void> _uploadPost() async {
     final user = FirebaseAuth.instance.currentUser;
-
-    await FirebaseFirestore.instance
+    var photoURL = "";
+    final postID = await FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
         .collection('posts')
@@ -116,6 +131,19 @@ class _UploadPageState extends State<UploadPage> {
           ),
           'createdAt': FieldValue.serverTimestamp(),
         });
+    if (_image != null) {
+      final storageRef = FirebaseStorage.instance.ref().child(
+        "uploaded_pictures/${postID.id}.jpg",
+      );
+      await storageRef.putFile(_image!);
+      photoURL = await storageRef.getDownloadURL();
+    }
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('posts')
+        .doc(postID.id)
+        .set({'photoURL': photoURL}, SetOptions(merge: true));
 
     titleController.clear();
     descriptionController.clear();
@@ -136,7 +164,9 @@ class _UploadPageState extends State<UploadPage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        _pickImage(context);
+                      },
                       icon: Icon(Icons.upload),
                       label: const Text("Upload image"),
                       style: ElevatedButton.styleFrom(

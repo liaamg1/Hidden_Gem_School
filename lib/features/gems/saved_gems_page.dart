@@ -58,7 +58,7 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(gem['title'], style: TextStyle(fontSize: 20)),
-                      //Image.asset(gem.imageUrl),
+                      Image.network(gem['photoURL']),
                       Text(
                         "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
                         style: TextStyle(fontWeight: FontWeight.bold),
