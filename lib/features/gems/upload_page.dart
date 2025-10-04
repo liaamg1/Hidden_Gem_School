@@ -23,14 +23,14 @@ class _UploadPageState extends State<UploadPage> {
   Position? _currentPosition;
   LatLng? _currentChosenPosition;
   //reused code from edit_profile_page
-  File? _image;
+  List<File> _imageList = [];
   Future<void> _pickImage(BuildContext context) async {
     final imagePicker = ImagePicker();
-    final pickedImage = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedImage != null) {
-      setState(() => _image = File(pickedImage.path));
+    final pickedImages = await imagePicker.pickMultiImage();
+    if (pickedImages.isNotEmpty) {
+      setState(() {
+        _imageList = pickedImages.map((picked) => File(picked.path)).toList();
+      });
     }
   }
 
@@ -114,7 +114,6 @@ class _UploadPageState extends State<UploadPage> {
 
   Future<void> _uploadPost() async {
     final user = FirebaseAuth.instance.currentUser;
-    var photoURL = "";
     final postID = await FirebaseFirestore.instance
         .collection('users')
         .doc(user!.uid)
@@ -131,12 +130,15 @@ class _UploadPageState extends State<UploadPage> {
           ),
           'createdAt': FieldValue.serverTimestamp(),
         });
-    if (_image != null) {
+
+    List<String> photoURL = [];
+    for (int i = 0; i < _imageList.length; i++) {
       final storageRef = FirebaseStorage.instance.ref().child(
-        "uploaded_pictures/${postID.id}.jpg",
+        "uploaded_pictures/${postID.id}_$i.jpg",
       );
-      await storageRef.putFile(_image!);
-      photoURL = await storageRef.getDownloadURL();
+      await storageRef.putFile(_imageList[i]);
+      final url = await storageRef.getDownloadURL();
+      photoURL.add(url);
     }
     await FirebaseFirestore.instance
         .collection('users')
