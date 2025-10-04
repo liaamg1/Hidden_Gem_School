@@ -34,6 +34,17 @@ class _UploadPageState extends State<UploadPage> {
     }
   }
 
+  //Reused code from _pickImage but changed function to pickImage with camera source
+  Future<void> _takePhoto(BuildContext context) async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _imageList.add(File(pickedFile.path));
+      });
+    }
+  }
+
   Future<LatLng?> showMap(BuildContext context) async {
     Marker? currentMarker;
 
@@ -180,7 +191,9 @@ class _UploadPageState extends State<UploadPage> {
                   SizedBox(width: 10),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        _takePhoto(context);
+                      },
                       icon: Icon(Icons.camera),
                       label: const Text("Take picture"),
                       style: ElevatedButton.styleFrom(
@@ -192,7 +205,23 @@ class _UploadPageState extends State<UploadPage> {
                 ],
               ),
               SizedBox(height: 10),
-
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (var img in _imageList)
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Image.file(
+                          img,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(
