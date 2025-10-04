@@ -52,20 +52,47 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
               itemBuilder: (context, index) {
                 final gem = items[index];
                 final location = gem['location'] as GeoPoint;
+                final photos = gem['photoURL'];
+
                 return Padding(
                   padding: EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(gem['title'], style: TextStyle(fontSize: 20)),
-                      Image.network(gem['photoURL']),
-                      Text(
-                        "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 7,
+                    color: const Color.fromARGB(255, 168, 169, 169),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (photos is List)
+                            for (var url in photos)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: Image.network(url),
+                              )
+                          else
+                            Image.network(photos),
+                          SizedBox(height: 8),
+                          Text(
+                            gem['title'],
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          Text(gem['description']),
+                        ],
                       ),
-                      Text(gem['description']),
-                      SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 );
               },
