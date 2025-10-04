@@ -10,7 +10,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-Future<Set<Marker>> getMarkersFromFirebase() async {
+Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
   final user = FirebaseAuth.instance.currentUser;
   final data = await FirebaseFirestore.instance
       .collection('users')
@@ -21,12 +21,63 @@ Future<Set<Marker>> getMarkersFromFirebase() async {
   final markers = data.docs.map((doc) {
     final docData = doc.data();
     final location = docData['location'];
+    final photos = docData['photoURL'];
     return Marker(
       markerId: MarkerId(doc.id),
       position: LatLng(location.latitude, location.longitude),
       infoWindow: InfoWindow(
         title: docData['title'],
-        snippet: docData['description'],
+        snippet: "Press HERE for more information",
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              content: SizedBox(
+                width: 500,
+                height: 500,
+                //reused code from saved_gems_page
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 7,
+                  color: const Color.fromARGB(255, 168, 169, 169),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (photos is List)
+                          for (var url in photos)
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Image.network(url),
+                            )
+                        else
+                          Image.network(photos),
+                        SizedBox(height: 8),
+                        Text(
+                          docData['title'],
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5),
+                        Text(docData['description']),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   });
@@ -39,7 +90,7 @@ class _MapPageState extends State<MapPage> {
   Set<Marker> _markers = {};
 
   Future<void> loadMarkers() async {
-    final loadedMarkers = await getMarkersFromFirebase();
+    final loadedMarkers = await getMarkersFromFirebase(context);
     setState(() {
       _markers = loadedMarkers;
     });

@@ -51,7 +51,7 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final gem = items[index];
-                final location = gem['location'] as GeoPoint;
+                final location = gem['location'];
                 final photos = gem['photoURL'];
 
                 return Padding(
