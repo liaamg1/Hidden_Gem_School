@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -71,10 +72,35 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
                             for (var url in photos)
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5),
-                                child: Image.network(url),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 400,
+                                  //Took cachednetworkImage code from https://pub.dev/packages/cached_network_image
+                                  child: CachedNetworkImage(
+                                    imageUrl: url,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
+                                ),
                               )
                           else
-                            Image.network(photos),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 400,
+                              //Took cachednetworkImage code from https://pub.dev/packages/cached_network_image
+                              child: CachedNetworkImage(
+                                imageUrl: photos,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                            ),
                           SizedBox(height: 8),
                           Text(
                             gem['title'],

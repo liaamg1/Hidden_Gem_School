@@ -159,6 +159,9 @@ class _UploadPageState extends State<UploadPage> {
         .set({'photoURL': photoURL}, SetOptions(merge: true));
 
     titleController.clear();
+    _currentChosenPosition = null;
+    _currentPosition = null;
+    _imageList = [];
     descriptionController.clear();
     setState(() => private = true);
   }
@@ -166,154 +169,163 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(centerTitle: true, title: Text("Upload Hidden Gem")),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(18.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _pickImage(context),
+                    icon: Icon(Icons.upload),
+                    label: const Text("Upload image"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _takePhoto(context),
+                    icon: Icon(Icons.camera),
+                    label: const Text("Take picture"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            // IMAGE PREVIEW
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        _pickImage(context);
-                      },
-                      icon: Icon(Icons.upload),
-                      label: const Text("Upload image"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                  for (var img in _imageList)
+                    Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: Image.file(
+                        img,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        _takePhoto(context);
-                      },
-                      icon: Icon(Icons.camera),
-                      label: const Text("Take picture"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ),
                 ],
               ),
-              SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (var img in _imageList)
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Image.file(
-                          img,
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                  ],
-                ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                labelText: "Title",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.diamond, color: Colors.blue),
               ),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: "Title",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.diamond, color: Colors.blue),
-                ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(
+                labelText: "Description",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.description),
               ),
-              SizedBox(height: 10),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: "Description",
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.description),
-                ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                _currentChosenPosition != null
-                    ? "  Chosen position\nlatitude: ${_currentChosenPosition?.latitude}\nLongitude: ${_currentChosenPosition?.longitude}"
-                    : "  Chosen position\nlatitude: ${_currentPosition?.latitude}\nLongitude: ${_currentPosition?.longitude}",
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final pos = await _determinePosition();
-                        setState(() {
-                          _currentPosition = pos;
-                          _currentChosenPosition = null;
-                        });
-                        //Testing if position system is working
-                        debugPrint(
-                          "Current position: Lat=${pos.latitude}, Lng=${pos.longitude}",
-                        );
-                      },
-                      icon: const Icon(Icons.my_location),
-                      label: const Text("Use current location"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
+            ),
+            SizedBox(height: 20),
+            // COORDINATES PREVIEW
+            Text(
+              _currentChosenPosition != null
+                  ? "Chosen position\nlatitude: ${_currentChosenPosition?.latitude}\nLongitude: ${_currentChosenPosition?.longitude}"
+                  : "Chosen position\nlatitude: ${_currentPosition?.latitude}\nLongitude: ${_currentPosition?.longitude}",
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final pos = await _determinePosition();
+                      setState(() {
+                        _currentPosition = pos;
+                        _currentChosenPosition = null;
+                      });
+                    },
+                    icon: const Icon(Icons.my_location),
+                    label: const Text("Use current location"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                     ),
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final chosenPosition = await showMap(context);
-                        setState(() {
-                          _currentPosition = null;
-                          _currentChosenPosition = chosenPosition;
-                        });
-                      },
-                      icon: const Icon(Icons.map),
-                      label: const Text("Choose location on map"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
+                ),
+                SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final chosenPosition = await showMap(context);
+                      setState(() {
+                        _currentPosition = null;
+                        _currentChosenPosition = chosenPosition;
+                      });
+                    },
+                    icon: const Icon(Icons.map),
+                    label: const Text("Choose location on map"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                     ),
                   ),
-                ],
-              ),
-              //Grabbed switch code from https://api.flutter.dev/flutter/material/Switch-class.html and changed a little
-              SwitchListTile(
-                title: Text(private ? "Private" : "Public"),
-                value: private,
-                activeThumbColor: Colors.lightBlueAccent,
-                onChanged: (bool value) {
-                  setState(() {
-                    private = value;
-                  });
-                },
-                contentPadding: EdgeInsets.symmetric(horizontal: 110.0),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton.icon(
-                icon: Icon(Icons.upload_file, size: 30),
-                label: const Text("Upload"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
                 ),
-                onPressed: () {
+              ],
+            ),
+            SizedBox(height: 10),
+            SwitchListTile(
+              title: Text(private ? "Private" : "Public"),
+              value: private,
+              activeThumbColor: Colors.lightBlueAccent,
+              onChanged: (bool value) {
+                setState(() {
+                  private = value;
+                });
+              },
+              contentPadding: EdgeInsets.symmetric(horizontal: 100.0),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: Icon(Icons.upload_file, size: 30),
+              label: const Text("Upload"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                if (titleController.text.trim().isEmpty ||
+                    descriptionController.text.trim().isEmpty ||
+                    (_currentPosition == null &&
+                        _currentChosenPosition == null) ||
+                    _imageList.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        "Cannot upload: missing title, description, location, or photo.",
+                      ),
+                    ),
+                  );
+                } else {
                   _uploadPost();
-                },
-              ),
-            ],
-          ),
+                }
+              },
+            ),
+          ],
         ),
       ),
     );
