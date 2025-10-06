@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/friends_list.dart';
 import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
 import 'package:hidden_gems_new/features/profile/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final String userId;
+  const ProfilePage({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -30,7 +29,7 @@ class ProfilePage extends StatelessWidget {
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(user!.uid)
+            .doc(userId)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

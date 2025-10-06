@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/services/firebase_options.dart';
@@ -44,16 +45,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Widget> pages = [
-    //Här sätter jag const eftersom dem är stateless, om stateful så sätter jag inte const
+  late List<Widget> pages;
+  int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final String userID = FirebaseAuth.instance.currentUser!.uid;
+    pages = [
+    //Const for stateless, not const for stateful
     const HomePage(),
     MapPage(),
-    const UploadPage(),
-    const ProfilePage(),
+    UploadPage(),
+    ProfilePage(userId: userID),
     SettingsPage(),
   ];
-
-  int currentPage = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
