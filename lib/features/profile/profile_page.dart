@@ -7,7 +7,7 @@ import 'package:hidden_gems_new/features/profile/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
-  
+
   ProfilePage({super.key, required this.userId});
   final currentUser = FirebaseAuth.instance.currentUser;
 
@@ -19,15 +19,15 @@ class ProfilePage extends StatelessWidget {
         title: const Text("Profile View"),
         actions: [
           if (userId == currentUser?.uid)
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
-              );
-            },
-          ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              },
+            ),
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(

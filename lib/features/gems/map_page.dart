@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,21 +50,44 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (photos is List)
-                          for (var url in photos)
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: Image.network(url),
-                            )
+                          CarouselSlider(
+                            options: CarouselOptions(
+                              height: 300,
+                              autoPlay: false,
+                              enlargeCenterPage: true,
+                              enableInfiniteScroll: false,
+                            ),
+                            items: photos.map((url) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                ),
+                                child: CachedNetworkImage(
+                                  imageUrl: url,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                              );
+                            }).toList(),
+                          )
                         else
-                          Image.network(photos),
-                        SizedBox(height: 8),
-                        Text(
-                          docData['title'],
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: double.infinity,
+                            height: 300,
+                            //Took cachednetworkImage code from https://pub.dev/packages/cached_network_image
+                            child: CachedNetworkImage(
+                              imageUrl: photos,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            ),
                           ),
-                        ),
                         SizedBox(height: 5),
                         Text(
                           "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
