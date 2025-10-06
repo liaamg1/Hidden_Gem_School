@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/profile_page.dart';
 
-
 final List<String> placeholderFriends = <String>['Jakob', 'Bengt', 'Carl'];
 
 class FriendsPage extends StatefulWidget {
@@ -26,30 +25,29 @@ class _FriendsPageState extends State<FriendsPage> {
   Future<void> fetchFriends() async {
     final user = FirebaseAuth.instance.currentUser;
     final friends = await FirebaseFirestore.instance
-    .collection('users')
-    .doc(user!.uid)
-    .collection('friends')
-    .get();
-    List<Map<String, dynamic>> temp=[];
-    for(var friend in friends.docs){
+        .collection('users')
+        .doc(user!.uid)
+        .collection('friends')
+        .get();
+    List<Map<String, dynamic>> temp = [];
+    for (var friend in friends.docs) {
       final friendData = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(friend.id)
-      .get();
-      temp.add({'id':friend.id,
-      ...friendData.data()!});
+          .collection('users')
+          .doc(friend.id)
+          .get();
+      temp.add({'id': friend.id, ...friendData.data()!});
     }
 
     setState(() {
-      friendsList=temp;
-      isInitialized=true;
+      friendsList = temp;
+      isInitialized = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: const Text("Friends")),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Friends")),
       body: Builder(
         builder: (context) {
           if (!isInitialized) {
@@ -67,17 +65,22 @@ class _FriendsPageState extends State<FriendsPage> {
                   backgroundImage: NetworkImage(friend['photoURL']),
                 ),
                 title: Text(friend['name']),
-                trailing: ElevatedButton(onPressed: ()
-                {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(userId: friend['id'])));
-                }, child: Text("View Proile")),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(userId: friend['id']),
+                      ),
+                    );
+                  },
+                  child: Text("View Proile"),
+                ),
               );
             },
           );
         },
       ),
-  );
+    );
   }
 }
-
-

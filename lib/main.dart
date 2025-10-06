@@ -53,13 +53,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     final String userID = FirebaseAuth.instance.currentUser!.uid;
     pages = [
-    //Const for stateless, not const for stateful
-    const HomePage(),
-    MapPage(),
-    UploadPage(),
-    ProfilePage(userId: userID),
-    SettingsPage(),
-  ];
+      //Const for stateless, not const for stateful
+      const HomePage(),
+      MapPage(),
+      UploadPage(),
+      ProfilePage(userId: userID),
+      SettingsPage(),
+    ];
   }
 
   @override

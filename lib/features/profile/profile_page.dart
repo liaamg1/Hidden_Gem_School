@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/friends_list.dart';
 import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
@@ -6,7 +7,9 @@ import 'package:hidden_gems_new/features/profile/setting_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userId;
-  const ProfilePage({super.key, required this.userId});
+  
+  ProfilePage({super.key, required this.userId});
+  final currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +18,7 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         title: const Text("Profile View"),
         actions: [
+          if (userId == currentUser?.uid)
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
