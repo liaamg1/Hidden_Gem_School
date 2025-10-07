@@ -4,7 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/friends_list.dart';
 import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
 import 'package:hidden_gems_new/features/profile/setting_page.dart';
+Future<void> unfollowUser(friend) async {
+  final currentUid = FirebaseAuth.instance.currentUser?.uid;
+  if (currentUid == null) return;
 
+  final db = FirebaseFirestore.instance;
+
+  await db.collection('users').doc(currentUid)
+      .collection('friends').doc(friend)
+      .delete();
+
+  await db.collection('users').doc(friend)
+      .collection('friends').doc(currentUid)
+      .delete();
+}
 class ProfilePage extends StatelessWidget {
   final String userId;
 
@@ -75,7 +88,15 @@ class ProfilePage extends StatelessWidget {
                               child: const Text("Friends"),
                             ),
                           )
-                        : SizedBox.shrink(),
+                        : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () async {
+                        await unfollowUser(userId);
+                      },
+                      child: const Text("Remove Friend"),
+                    ),
                     SizedBox(width: 25),
                     Expanded(
                       child: ElevatedButton(
