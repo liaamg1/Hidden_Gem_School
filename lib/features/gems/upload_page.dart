@@ -20,7 +20,7 @@ class _UploadPageState extends State<UploadPage> {
   bool private = true;
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-
+  final currentUser = FirebaseAuth.instance.currentUser!.uid;
   Position? _currentPosition;
   LatLng? _currentChosenPosition;
   //reused code from edit_profile_page
@@ -393,7 +393,8 @@ class _UploadPageState extends State<UploadPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const SavedGemsPage(),
+                            builder: (context) =>
+                                SavedGemsPage(userId: currentUser),
                           ),
                         );
                       }

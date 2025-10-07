@@ -61,19 +61,21 @@ class ProfilePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(width: 30),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FriendsPage(),
+                    userId == currentUser?.uid
+                        ? Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FriendsPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text("Friends"),
                             ),
-                          );
-                        },
-                        child: const Text("Friends"),
-                      ),
-                    ),
+                          )
+                        : SizedBox.shrink(),
                     SizedBox(width: 25),
                     Expanded(
                       child: ElevatedButton(
@@ -81,7 +83,8 @@ class ProfilePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SavedGemsPage(),
+                              builder: (context) =>
+                                  SavedGemsPage(userId: userId),
                             ),
                           );
                         },

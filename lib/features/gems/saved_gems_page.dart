@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SavedGemsPage extends StatefulWidget {
-  const SavedGemsPage({super.key});
+  final String userId;
+  const SavedGemsPage({super.key, required this.userId});
 
   @override
   State<SavedGemsPage> createState() => _SavedGemsPageState();
@@ -13,14 +14,14 @@ class SavedGemsPage extends StatefulWidget {
 
 class _SavedGemsPageState extends State<SavedGemsPage> {
   final user = FirebaseAuth.instance.currentUser;
-  late List<Map<String, dynamic>> items;
+  List<Map<String, dynamic>> items = [];
   bool isInitialized = false;
   Future<void> getSavedGems() async {
     List<Map<String, dynamic>> tempList = [];
 
     var data = await FirebaseFirestore.instance
         .collection('users')
-        .doc(user!.uid)
+        .doc(widget.userId)
         .collection('posts')
         .get();
 
@@ -47,7 +48,7 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
         centerTitle: true,
         title: Text("My Saved Gems", textAlign: TextAlign.center),
       ),
-      body: isInitialized
+      body: (isInitialized)
           ? ListView.builder(
               padding: EdgeInsets.all(8),
               itemCount: items.length,
@@ -130,7 +131,7 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
                 );
               },
             )
-          : Text("no data"),
+          : Text("no data yet"),
     );
   }
 }
