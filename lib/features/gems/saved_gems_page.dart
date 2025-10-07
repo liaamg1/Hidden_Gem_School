@@ -56,7 +56,10 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
                 final gem = items[index];
                 final location = gem['location'];
                 final photos = gem['photoURL'];
-
+                final status = gem['private'];
+                if (status && widget.userId != user!.uid) {
+                  return SizedBox.shrink();
+                }
                 return Padding(
                   padding: EdgeInsets.all(5),
                   child: Card(
