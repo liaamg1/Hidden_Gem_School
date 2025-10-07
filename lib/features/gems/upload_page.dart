@@ -24,7 +24,7 @@ class _UploadPageState extends State<UploadPage> {
   LatLng? _currentChosenPosition;
   //reused code from edit_profile_page
   static const maxNrOfPictures = 5;
-  var currentNrOfPictures=0;
+  var currentNrOfPictures = 0;
   List<File> _imageList = [];
 
   Future<void> _pickImage(BuildContext context) async {
@@ -33,23 +33,17 @@ class _UploadPageState extends State<UploadPage> {
 
     if (pickedImages.isEmpty) return;
 
-    if (pickedImages.length<=maxNrOfPictures-currentNrOfPictures) {
+    if (pickedImages.length <= maxNrOfPictures - currentNrOfPictures) {
       setState(() {
-      currentNrOfPictures +=pickedImages.length;
+        currentNrOfPictures += pickedImages.length;
         _imageList = pickedImages.map((picked) => File(picked.path)).toList();
       });
-    }
-    else{
-      if (!context.mounted)
-      {
+    } else {
+      if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            "Can not upload more than 5 pictures.",
-          ),
-        ),
+        SnackBar(content: const Text("Can not upload more than 5 pictures.")),
       );
     }
   }
@@ -61,23 +55,21 @@ class _UploadPageState extends State<UploadPage> {
 
     if (pickedFile == null) return;
 
-    if (maxNrOfPictures>_imageList.length) {
+    if (maxNrOfPictures > _imageList.length) {
       setState(() {
+        currentNrOfPictures +=1;
         _imageList.add(File(pickedFile.path));
       });
-    }
-    else{
+    } else {
+      if (!context.mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            "Can not upload more than 5 pictures.",
-          ),
-        ),
+        SnackBar(content: const Text("Can not upload more than 5 pictures.")),
       );
       return;
     }
   }
-  
 
   Future<LatLng?> showMap(BuildContext context) async {
     Marker? currentMarker;
@@ -197,6 +189,7 @@ class _UploadPageState extends State<UploadPage> {
     _currentPosition = null;
     _imageList = [];
     descriptionController.clear();
+    currentNrOfPictures=0;
     setState(() => private = true);
   }
 
@@ -207,8 +200,10 @@ class _UploadPageState extends State<UploadPage> {
       appBar: AppBar(centerTitle: true, title: Text("Upload Hidden Gem")),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(18.0),
+        child: Align(
+          alignment: Alignment.topCenter,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               children: [
@@ -237,6 +232,11 @@ class _UploadPageState extends State<UploadPage> {
                 ),
               ],
             ),
+            SizedBox(height: 5),
+            Center(
+              child: Text("Images $currentNrOfPictures/$maxNrOfPictures", 
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),)
+              ),
             SizedBox(height: 10),
             // IMAGE PREVIEW
             SingleChildScrollView(
@@ -275,12 +275,19 @@ class _UploadPageState extends State<UploadPage> {
               ),
             ),
             SizedBox(height: 20),
-            // COORDINATES PREVIEW
-            Text(
-              _currentChosenPosition != null
-                  ? "Chosen position\nlatitude: ${_currentChosenPosition?.latitude}\nLongitude: ${_currentChosenPosition?.longitude}"
-                  : "Chosen position\nlatitude: ${_currentPosition?.latitude}\nLongitude: ${_currentPosition?.longitude}",
+            Center(
+              child: Text("Chosen position", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
             ),
+            Center(
+              // COORDINATES PREVIEW
+              child: Text(
+              _currentChosenPosition != null
+                  ? "Latitude: ${_currentChosenPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentChosenPosition?.longitude ?? "Not Chosen"}"
+                  : "Latitude: ${_currentPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentPosition?.longitude ?? "Not Chosen"}",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
+            ),
+            
+            
             SizedBox(height: 10),
             Row(
               children: [
@@ -360,6 +367,7 @@ class _UploadPageState extends State<UploadPage> {
               },
             ),
           ],
+        ),
         ),
       ),
     );
