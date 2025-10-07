@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _UploadPageState extends State<UploadPage> {
   static const maxNrOfPictures = 5;
   var currentNrOfPictures = 0;
   List<File> _imageList = [];
+  bool isUploading =false;
 
   Future<void> _pickImage(BuildContext context) async {
     final imagePicker = ImagePicker();
@@ -57,7 +59,7 @@ class _UploadPageState extends State<UploadPage> {
 
     if (maxNrOfPictures > _imageList.length) {
       setState(() {
-        currentNrOfPictures +=1;
+        currentNrOfPictures += 1;
         _imageList.add(File(pickedFile.path));
       });
     } else {
@@ -150,6 +152,9 @@ class _UploadPageState extends State<UploadPage> {
   //TO HERE
 
   Future<void> _uploadPost() async {
+    setState(() {
+      isUploading=true;
+    });
     final user = FirebaseAuth.instance.currentUser;
     final postID = await FirebaseFirestore.instance
         .collection('users')
@@ -189,8 +194,10 @@ class _UploadPageState extends State<UploadPage> {
     _currentPosition = null;
     _imageList = [];
     descriptionController.clear();
-    currentNrOfPictures=0;
-    setState(() => private = true);
+    currentNrOfPictures = 0;
+    setState((){
+    private = true; 
+    isUploading=false;});
   }
 
   @override
@@ -198,177 +205,193 @@ class _UploadPageState extends State<UploadPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(centerTitle: true, title: Text("Upload Hidden Gem")),
-      body: SingleChildScrollView(
+      body: Stack(
+      children: [SingleChildScrollView(
         padding: EdgeInsets.all(18.0),
         child: Align(
           alignment: Alignment.topCenter,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _pickImage(context),
-                    icon: Icon(Icons.upload),
-                    label: const Text("Upload image"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _takePhoto(context),
-                    icon: Icon(Icons.camera),
-                    label: const Text("Take picture"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 5),
-            Center(
-              child: Text("Images $currentNrOfPictures/$maxNrOfPictures", 
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),)
-              ),
-            SizedBox(height: 10),
-            // IMAGE PREVIEW
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
                 children: [
-                  for (var img in _imageList)
-                    Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Image.file(
-                        img,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _pickImage(context),
+                      icon: Icon(Icons.upload),
+                      label: const Text("Upload image"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
                       ),
                     ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _takePhoto(context),
+                      icon: Icon(Icons.camera),
+                      label: const Text("Take picture"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: "Title",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.diamond, color: Colors.blue),
-              ),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: "Description",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.description),
-              ),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text("Chosen position", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
-            ),
-            Center(
-              // COORDINATES PREVIEW
-              child: Text(
-              _currentChosenPosition != null
-                  ? "Latitude: ${_currentChosenPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentChosenPosition?.longitude ?? "Not Chosen"}"
-                  : "Latitude: ${_currentPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentPosition?.longitude ?? "Not Chosen"}",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),),
-            ),
-            
-            
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      final pos = await _determinePosition();
-                      setState(() {
-                        _currentPosition = pos;
-                        _currentChosenPosition = null;
-                      });
-                    },
-                    icon: const Icon(Icons.my_location),
-                    label: const Text("Use current location"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
+              SizedBox(height: 5),
+              Center(
+                child: Text(
+                  "Images $currentNrOfPictures/$maxNrOfPictures",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                 ),
-                SizedBox(width: 15),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      final chosenPosition = await showMap(context);
-                      setState(() {
-                        _currentPosition = null;
-                        _currentChosenPosition = chosenPosition;
-                      });
-                    },
-                    icon: const Icon(Icons.map),
-                    label: const Text("Choose location on map"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            SwitchListTile(
-              title: Text(private ? "Private" : "Public"),
-              value: private,
-              activeThumbColor: Colors.lightBlueAccent,
-              onChanged: (bool value) {
-                setState(() {
-                  private = value;
-                });
-              },
-              contentPadding: EdgeInsets.symmetric(horizontal: 100.0),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton.icon(
-              icon: Icon(Icons.upload_file, size: 30),
-              label: const Text("Upload"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
               ),
-              onPressed: () {
-                if (titleController.text.trim().isEmpty ||
-                    descriptionController.text.trim().isEmpty ||
-                    (_currentPosition == null &&
-                        _currentChosenPosition == null) ||
-                    _imageList.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                        "Cannot upload: missing title, description, location, or photo.",
+              SizedBox(height: 10),
+              // IMAGE PREVIEW
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (var img in _imageList)
+                      Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Image.file(
+                          img,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: "Title",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.diamond, color: Colors.blue),
+                ),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: "Description",
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.description),
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  "Chosen position",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+              Center(
+                // COORDINATES PREVIEW
+                child: Text(
+                  _currentChosenPosition != null
+                      ? "Latitude: ${_currentChosenPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentChosenPosition?.longitude ?? "Not Chosen"}"
+                      : "Latitude: ${_currentPosition?.latitude ?? "Not Chosen"}\nLongitude: ${_currentPosition?.longitude ?? "Not Chosen"}",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final pos = await _determinePosition();
+                        setState(() {
+                          _currentPosition = pos;
+                          _currentChosenPosition = null;
+                        });
+                      },
+                      icon: const Icon(Icons.my_location),
+                      label: const Text("Use current location"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
                       ),
                     ),
-                  );
-                } else {
-                  _uploadPost();
-                }
-              },
-            ),
-          ],
+                  ),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final chosenPosition = await showMap(context);
+                        setState(() {
+                          _currentPosition = null;
+                          _currentChosenPosition = chosenPosition;
+                        });
+                      },
+                      icon: const Icon(Icons.map),
+                      label: const Text("Choose location on map"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              SwitchListTile(
+                title: Text(private ? "Private" : "Public"),
+                value: private,
+                activeThumbColor: Colors.lightBlueAccent,
+                onChanged: (bool value) {
+                  setState(() {
+                    private = value;
+                  });
+                },
+                contentPadding: EdgeInsets.symmetric(horizontal: 100.0),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton.icon(
+                icon: Icon(Icons.upload_file, size: 30),
+                label: const Text("Upload"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  if (titleController.text.trim().isEmpty ||
+                      descriptionController.text.trim().isEmpty ||
+                      (_currentPosition == null &&
+                          _currentChosenPosition == null) ||
+                      _imageList.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Cannot upload: missing title, description, location, or photo.",
+                        ),
+                      ),
+                    );
+                  } else {
+                    await _uploadPost();
+                    if(!context.mounted){
+                      return;
+                    }
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SavedGemsPage()),);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+      if(isUploading)
+        Center(
+          child: CircularProgressIndicator(),
         ),
+      ],
       ),
     );
   }
