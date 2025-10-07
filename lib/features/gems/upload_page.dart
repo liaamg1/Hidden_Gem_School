@@ -23,14 +23,34 @@ class _UploadPageState extends State<UploadPage> {
   Position? _currentPosition;
   LatLng? _currentChosenPosition;
   //reused code from edit_profile_page
+  static const maxNrOfPictures = 5;
+  var currentNrOfPictures=0;
   List<File> _imageList = [];
+
   Future<void> _pickImage(BuildContext context) async {
     final imagePicker = ImagePicker();
     final pickedImages = await imagePicker.pickMultiImage();
-    if (pickedImages.isNotEmpty) {
+
+    if (pickedImages.isEmpty) return;
+
+    if (pickedImages.length<=maxNrOfPictures-currentNrOfPictures) {
       setState(() {
+      currentNrOfPictures +=pickedImages.length;
         _imageList = pickedImages.map((picked) => File(picked.path)).toList();
       });
+    }
+    else{
+      if (!context.mounted)
+      {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Can not upload more than 5 pictures.",
+          ),
+        ),
+      );
     }
   }
 
@@ -38,12 +58,26 @@ class _UploadPageState extends State<UploadPage> {
   Future<void> _takePhoto(BuildContext context) async {
     final imagePicker = ImagePicker();
     final pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
-    if (pickedFile != null) {
+
+    if (pickedFile == null) return;
+
+    if (maxNrOfPictures>_imageList.length) {
       setState(() {
         _imageList.add(File(pickedFile.path));
       });
     }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Can not upload more than 5 pictures.",
+          ),
+        ),
+      );
+      return;
+    }
   }
+  
 
   Future<LatLng?> showMap(BuildContext context) async {
     Marker? currentMarker;
