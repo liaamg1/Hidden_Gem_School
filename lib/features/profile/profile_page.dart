@@ -121,6 +121,9 @@ class ProfilePage extends StatelessWidget {
 
                             if (confirm == true) {
                               await unfollowUser(userId);
+                              if (!context.mounted){
+                                return;
+                              }
                               Navigator.pop(context);
                               Navigator.pop(context);
 
