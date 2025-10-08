@@ -106,36 +106,39 @@ class ProfilePage extends StatelessWidget {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
-                            final confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text("Are you sure?"),
-                                content: const Text("Do you really want to remove this friend?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context, false),
-                                    child: const Text("Cancel"),
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Are you sure?"),
+                                  content: const Text(
+                                    "Do you really want to remove this friend?",
                                   ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context, true),
-                                    child: const Text("Remove"),
-                                  ),
-                                ],
-                              ),
-                            );
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: const Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: const Text("Remove"),
+                                    ),
+                                  ],
+                                ),
+                              );
 
-                            if (confirm == true) {
-                              await unfollowUser(userId);
-                              if (!context.mounted){
-                                return;
+                              if (confirm == true) {
+                                await unfollowUser(userId);
+                                if (!context.mounted) {
+                                  return;
+                                }
+                                Navigator.pop(context);
+                                Navigator.pop(context);
                               }
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-
-                            }
-                          },
-                          child: const Text("Remove Friend"),
-                        ),
+                            },
+                            child: const Text("Remove Friend"),
+                          ),
                     SizedBox(width: 20),
                     Expanded(
                       child: ElevatedButton(
