@@ -85,6 +85,10 @@ class ProfilePage extends StatelessWidget {
                     userId == currentUser?.uid
                         ? Expanded(
                             child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -99,6 +103,7 @@ class ProfilePage extends StatelessWidget {
                         : ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
                             final confirm = await showDialog<bool>(
@@ -131,9 +136,13 @@ class ProfilePage extends StatelessWidget {
                           },
                           child: const Text("Remove Friend"),
                         ),
-                    SizedBox(width: 25),
+                    SizedBox(width: 20),
                     Expanded(
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,

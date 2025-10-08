@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/profile_page.dart';
+import 'package:hidden_gems_new/features/social/add_friend_page.dart';
 
 final List<String> placeholderFriends = <String>['Jakob', 'Bengt', 'Carl'];
 
@@ -37,7 +38,6 @@ class _FriendsPageState extends State<FriendsPage> {
           .get();
       temp.add({'id': friend.id, ...friendData.data()!});
     }
-
     setState(() {
       friendsList = temp;
       isInitialized = true;
@@ -47,7 +47,7 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Friends")),
+      appBar: AppBar(title: const Text("Friends"),),
       body: Builder(
         builder: (context) {
           if (!isInitialized) {
@@ -57,15 +57,40 @@ class _FriendsPageState extends State<FriendsPage> {
             return const Center(child: Text("No friends yet"));
           }
           return ListView.builder(
-            itemCount: friendsList.length,
-            itemBuilder: (context, index) {
-              final friend = friendsList[index];
+          //Added an extra index place so that I can display add new friend butt on once.
+          itemCount: friendsList.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.person_add),
+                  label: const Text("Add new friend"),
+                  style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AddFriendPage()),
+                    );
+                  },
+                ),
+              );
+            }
+            //List starts from index 1 here so that is why im doing index-1.
+            final friend = friendsList[index - 1];
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(friend['photoURL']),
                 ),
                 title: Text(friend['name']),
                 trailing: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -74,7 +99,7 @@ class _FriendsPageState extends State<FriendsPage> {
                       ),
                     );
                   },
-                  child: Text("View Proile"),
+                  child: Text("View Profile"),
                 ),
               );
             },
