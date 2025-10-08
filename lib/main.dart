@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     pages = [
       //Const for stateless, not const for stateful
       const HomePage(),
-      MapPage(),
+      MapPage(latitude: 56.16156, longitude: 15.58661),
       UploadPage(),
       ProfilePage(userId: userID),
     ];

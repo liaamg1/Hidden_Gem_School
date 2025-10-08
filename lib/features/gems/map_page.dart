@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  final double latitude;
+  final double longitude;
+
+  const MapPage({super.key, required this.latitude, required this.longitude});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -112,6 +115,7 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
+  late final LatLng location;
   Set<Marker> _markers = {};
 
   Future<void> loadMarkers() async {
@@ -124,10 +128,10 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    location = LatLng(widget.latitude, widget.longitude);
     loadMarkers();
   }
 
-  static const LatLng karlskrona = LatLng(56.1612, 15.5869);
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -135,12 +139,19 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Map"),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
-        initialCameraPosition: const CameraPosition(
-          target: karlskrona,
-          zoom: 11.0,
-        ),
+        initialCameraPosition: CameraPosition(target: location, zoom: 13.0),
         markers: _markers,
       ),
     );

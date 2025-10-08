@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hidden_gems_new/features/gems/map_page.dart';
 
 class SavedGemsPage extends StatefulWidget {
   final String userId;
@@ -121,9 +122,24 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
                             ),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.map),
+                            label: const Text("View on Map"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MapPage(
+                                    latitude: location.latitude,
+                                    longitude: location.longitude,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(height: 5),
                           Text(gem['description']),

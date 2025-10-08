@@ -54,7 +54,10 @@ class _NotificationPageState extends State<NotificationPage> {
                     children: [
                       Text(
                         "${invite['from']}\nWants to be your friend.",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Row(
