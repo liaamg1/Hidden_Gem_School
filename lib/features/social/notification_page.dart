@@ -19,28 +19,26 @@ class _NotificationPageState extends State<NotificationPage> {
     currentEmail = currentUser!.email!.toLowerCase();
   }
 
-  Stream<QuerySnapshot> loadRequests(){
+  Stream<QuerySnapshot> loadRequests() {
     return FirebaseFirestore.instance
-    .collection('friend_invites')
-    .where('to', isEqualTo: currentEmail)
-    .where('status', isEqualTo: 'pending')
-    .snapshots();
+        .collection('friend_invites')
+        .where('to', isEqualTo: currentEmail)
+        .where('status', isEqualTo: 'pending')
+        .snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Notifications"),
-        centerTitle: true),
+      appBar: AppBar(title: Text("Notifications"), centerTitle: true),
       body: StreamBuilder(
-        stream: loadRequests(), 
-        builder: (context, snapshot){
-          if (!snapshot.hasData){
+        stream: loadRequests(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
           final invites = snapshot.data!.docs;
-          if(invites.isEmpty){
+          if (invites.isEmpty) {
             return const Center(child: Text("No pending friend requests!"));
           }
           return ListView.builder(
@@ -62,9 +60,12 @@ class _NotificationPageState extends State<NotificationPage> {
                       Row(
                         children: [
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
                             onPressed: () async {
-                              final fromUserQuery = await FirebaseFirestore.instance
+                              final fromUserQuery = await FirebaseFirestore
+                                  .instance
                                   .collection('users')
                                   .where('email', isEqualTo: invite['from'])
                                   .limit(1)
@@ -96,7 +97,9 @@ class _NotificationPageState extends State<NotificationPage> {
                           ),
                           const SizedBox(width: 10),
                           ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
                             onPressed: () async {
                               await FirebaseFirestore.instance
                                   .collection('friend_invites')
@@ -113,11 +116,8 @@ class _NotificationPageState extends State<NotificationPage> {
               );
             },
           );
-
-        }
-      )
-      
+        },
+      ),
     );
   }
 }
-
