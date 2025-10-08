@@ -2,19 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 Future<void> addFriend(String toEmail) async {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser == null) return;
 
-  await FirebaseFirestore.instance
-      .collection('friend_invites').add({
-        'from': currentUser.email,
-        'to': toEmail,
-        'status': 'pending',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-      
+  await FirebaseFirestore.instance.collection('friend_invites').add({
+    'from': currentUser.email,
+    'to': toEmail,
+    'status': 'pending',
+    'createdAt': FieldValue.serverTimestamp(),
+  });
 }
 
 class AddFriendPage extends StatefulWidget {
