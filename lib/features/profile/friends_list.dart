@@ -53,7 +53,7 @@ class _FriendsPageState extends State<FriendsPage> {
           if (!isInitialized) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           return ListView.builder(
             //Added an extra index place so that I can display add new friend butt on once.
             itemCount: friendsList.length + 1,
