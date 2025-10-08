@@ -9,16 +9,14 @@ Future<void> unfollowUser(friend) async {
   final currentUid = FirebaseAuth.instance.currentUser?.uid;
   if (currentUid == null) return;
 
-  final db = FirebaseFirestore.instance;
-
-  await db
+  await FirebaseFirestore.instance
       .collection('users')
       .doc(currentUid)
       .collection('friends')
       .doc(friend)
       .delete();
 
-  await db
+  await FirebaseFirestore.instance
       .collection('users')
       .doc(friend)
       .collection('friends')
