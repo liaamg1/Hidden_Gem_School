@@ -53,9 +53,7 @@ class _FriendsPageState extends State<FriendsPage> {
           if (!isInitialized) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (friendsList.isEmpty) {
-            return const Center(child: Text("No friends yet"));
-          }
+          
           return ListView.builder(
             //Added an extra index place so that I can display add new friend butt on once.
             itemCount: friendsList.length + 1,
@@ -80,6 +78,9 @@ class _FriendsPageState extends State<FriendsPage> {
                     },
                   ),
                 );
+              }
+              if (friendsList.isEmpty) {
+                return const Center(child: Text("No friends yet"));
               }
               //List starts from index 1 here so that is why im doing index-1.
               final friend = friendsList[index - 1];

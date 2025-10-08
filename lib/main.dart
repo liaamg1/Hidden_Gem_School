@@ -6,7 +6,6 @@ import 'package:hidden_gems_new/features/home/home_page.dart';
 import 'package:hidden_gems_new/features/auth/login_page.dart';
 import 'package:hidden_gems_new/features/gems/map_page.dart';
 import 'package:hidden_gems_new/features/profile/profile_page.dart';
-import 'package:hidden_gems_new/features/profile/setting_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hidden_gems_new/features/gems/upload_page.dart';
 
@@ -58,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
       MapPage(),
       UploadPage(),
       ProfilePage(userId: userID),
-      SettingsPage(),
     ];
   }
 

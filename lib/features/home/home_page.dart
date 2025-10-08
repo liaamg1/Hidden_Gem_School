@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hidden_gems_new/features/social/notification_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -6,6 +7,21 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => NotificationPage()),
+              );
+            },
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: Container(
