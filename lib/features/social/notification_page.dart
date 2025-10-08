@@ -53,8 +53,8 @@ class _NotificationPageState extends State<NotificationPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${invite['from']} wants to be your friend.",
-                        style: const TextStyle(fontSize: 16),
+                        "${invite['from']}\nWants to be your friend.",
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -62,6 +62,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
                               final fromUserQuery = await FirebaseFirestore
@@ -99,6 +100,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
                               await FirebaseFirestore.instance
