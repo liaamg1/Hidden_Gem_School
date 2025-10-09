@@ -74,7 +74,11 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
         return BitmapDescriptor.hueRed;
       }
     }).toList();
-
+    final postOwnerNameDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(postOwner)
+        .get();
+    final postOwnerName = postOwnerNameDoc['name'];
     final hues = await Future.wait(hueFutures);
 
     for (int i = 0; i < docs.length; i++) {
@@ -82,7 +86,6 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
       final location = docData['location'];
       final photos = docData['photoURL'];
       final hue = hues[i];
-
       if ((postOwner != currentUser!.uid && !docData['private']) ||
           postOwner == currentUser.uid) {
         markers.add(
@@ -111,6 +114,13 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Center(
+                                child: Text(
+                                  "Post Owner: $postOwnerName",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+
                               if (photos is List)
                                 CarouselSlider(
                                   options: CarouselOptions(
@@ -153,6 +163,13 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
                                         Icon(Icons.error),
                                   ),
                                 ),
+                              Text(
+                                docData['title'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               SizedBox(height: 5),
                               Text(
                                 "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
