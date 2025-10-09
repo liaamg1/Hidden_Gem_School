@@ -31,9 +31,28 @@ Future<List<String>> getFriendsUserIds() async {
   return allUsers;
 }
 
+Future<double?> getFriendColorHue(String friendId) async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  if (currentUser == null) return null;
+
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(currentUser.uid)
+      .collection('friends')
+      .doc(friendId)
+      .get();
+
+  if (!doc.exists) return null;
+  final int colorValue = doc.get('color');
+  final double hue = HSVColor.fromColor(Color(colorValue)).hue;
+  return hue;
+}
+
 Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+
   final users = await getFriendsUserIds();
-  List<QueryDocumentSnapshot> allPosts = [];
+  Set<Marker> markers = {};
 
   for (var i = 0; i < users.length; i++) {
     final data = await FirebaseFirestore.instance
@@ -41,99 +60,106 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
         .doc(users[i])
         .collection('posts')
         .get();
-    allPosts.addAll(data.docs);
-  }
-
-  final markers = allPosts.map((doc) {
-    final docData = doc;
-    final location = docData['location'];
-    final photos = docData['photoURL'];
-    return Marker(
-      markerId: MarkerId(doc.id),
-      position: LatLng(location.latitude, location.longitude),
-      infoWindow: InfoWindow(
-        title: docData['title'],
-        snippet: "Press HERE for more information",
-
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              content: SizedBox(
-                width: 500,
-                height: 500,
-                //reused code from saved_gems_page
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  elevation: 7,
-                  color: const Color.fromARGB(255, 168, 169, 169),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (photos is List)
-                          CarouselSlider(
-                            options: CarouselOptions(
-                              height: 300,
-                              autoPlay: false,
-                              enlargeCenterPage: true,
-                              enableInfiniteScroll: false,
-                            ),
-                            items: photos.map((url) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 5,
+    for (var doc in data.docs) {
+      final docData = doc;
+      final location = docData['location'];
+      final photos = docData['photoURL'];
+      double hue;
+      final postOwner = users[i];
+      if (postOwner != currentUser!.uid) {
+        hue = await getFriendColorHue(postOwner) ?? BitmapDescriptor.hueAzure;
+      } else {
+        hue = BitmapDescriptor.hueRed;
+      }
+      markers.add(
+        Marker(
+          markerId: MarkerId(doc.id),
+          position: LatLng(location.latitude, location.longitude),
+          infoWindow: InfoWindow(
+            title: docData['title'],
+            snippet: "Press HERE for more information",
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: SizedBox(
+                    width: 500,
+                    height: 500,
+                    //reused code from saved_gems_page
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 7,
+                      color: const Color.fromARGB(255, 168, 169, 169),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (photos is List)
+                              CarouselSlider(
+                                options: CarouselOptions(
+                                  height: 300,
+                                  autoPlay: false,
+                                  enlargeCenterPage: true,
+                                  enableInfiniteScroll: false,
                                 ),
+                                items: photos.map((url) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 5,
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: url,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                                  );
+                                }).toList(),
+                              )
+                            else
+                              SizedBox(
+                                width: double.infinity,
+                                height: 300,
+                                //Took cachednetworkImage code from https://pub.dev/packages/cached_network_image
                                 child: CachedNetworkImage(
-                                  imageUrl: url,
+                                  imageUrl: photos,
                                   fit: BoxFit.cover,
-                                  placeholder: (context, url) => const Center(
+                                  placeholder: (context, url) => Center(
                                     child: CircularProgressIndicator(),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
+                                      Icon(Icons.error),
                                 ),
-                              );
-                            }).toList(),
-                          )
-                        else
-                          SizedBox(
-                            width: double.infinity,
-                            height: 300,
-                            //Took cachednetworkImage code from https://pub.dev/packages/cached_network_image
-                            child: CachedNetworkImage(
-                              imageUrl: photos,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                              ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Coordinates: \nLatitude: ${location.latitude}\nLongitude: ${location.longitude}",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                            SizedBox(height: 5),
+                            Text(docData['description']),
+                          ],
                         ),
-                        SizedBox(height: 5),
-                        Text(docData['description']),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-    );
-  });
-  final markersSet = markers.toSet();
-  return markersSet;
+              );
+            },
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(hue),
+        ),
+      );
+    }
+  }
+  return markers;
 }
 
 class _MapPageState extends State<MapPage> {
