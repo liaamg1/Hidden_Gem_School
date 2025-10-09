@@ -15,16 +15,37 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
+Future<List<String>> getFriendsUserIds() async {
   final user = FirebaseAuth.instance.currentUser;
-  final data = await FirebaseFirestore.instance
+  if (user == null) {
+    return [];
+  }
+  final friendSnapshot = await FirebaseFirestore.instance
       .collection('users')
-      .doc(user!.uid)
-      .collection('posts')
+      .doc(user.uid)
+      .collection('friends')
       .get();
 
-  final markers = data.docs.map((doc) {
-    final docData = doc.data();
+  final friendIds = friendSnapshot.docs.map((doc) => doc.id).toList();
+  final allUsers = [user.uid, ...friendIds];
+  return allUsers;
+}
+
+Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
+  final users = await getFriendsUserIds();
+  List<QueryDocumentSnapshot> allPosts = [];
+
+  for (var i = 0; i < users.length; i++) {
+    final data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(users[i])
+        .collection('posts')
+        .get();
+    allPosts.addAll(data.docs);
+  }
+
+  final markers = allPosts.map((doc) {
+    final docData = doc;
     final location = docData['location'];
     final photos = docData['photoURL'];
     return Marker(
@@ -33,6 +54,7 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
       infoWindow: InfoWindow(
         title: docData['title'],
         snippet: "Press HERE for more information",
+
         onTap: () {
           showDialog(
             context: context,
@@ -107,6 +129,7 @@ Future<Set<Marker>> getMarkersFromFirebase(BuildContext context) async {
           );
         },
       ),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
     );
   });
   final markersSet = markers.toSet();

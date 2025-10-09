@@ -21,6 +21,10 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 100),
             const SizedBox(height: 15),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -31,6 +35,10 @@ class SettingsPage extends StatelessWidget {
             ),
 
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 await GoogleSignIn().signOut();
