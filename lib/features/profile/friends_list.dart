@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/profile/profile_page.dart';
 import 'package:hidden_gems_new/features/social/add_friend_page.dart';
 
-final List<String> placeholderFriends = <String>['Jakob', 'Bengt', 'Carl'];
-
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
 
@@ -55,7 +53,6 @@ class _FriendsPageState extends State<FriendsPage> {
           }
 
           return ListView.builder(
-            //Added an extra index place so that I can display add new friend butt on once.
             itemCount: friendsList.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
@@ -79,11 +76,14 @@ class _FriendsPageState extends State<FriendsPage> {
                   ),
                 );
               }
+
               if (friendsList.isEmpty) {
                 return const Center(child: Text("No friends yet"));
               }
-              //List starts from index 1 here so that is why im doing index-1.
+
+              // List starts from index 1, so use index - 1
               final friend = friendsList[index - 1];
+
               return ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(friend['photoURL']),
@@ -94,15 +94,19 @@ class _FriendsPageState extends State<FriendsPage> {
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    final removed = await Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProfilePage(userId: friend['id']),
                       ),
                     );
+
+                    if (removed == true) {
+                      await fetchFriends();
+                    }
                   },
-                  child: Text("View Profile"),
+                  child: const Text("View Profile"),
                 ),
               );
             },

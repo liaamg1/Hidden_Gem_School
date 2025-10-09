@@ -24,6 +24,7 @@ class _SavedGemsPageState extends State<SavedGemsPage> {
         .collection('users')
         .doc(widget.userId)
         .collection('posts')
+        .orderBy('createdAt', descending: true)
         .get();
 
     for (var element in data.docs) {

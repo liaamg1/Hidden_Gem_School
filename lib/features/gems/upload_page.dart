@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hidden_gems_new/features/home/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadPage extends StatefulWidget {
@@ -422,13 +421,6 @@ class _UploadPageState extends State<UploadPage> {
                         );
                       } else {
                         await _uploadPost();
-                        if (!context.mounted) {
-                          return;
-                        }
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => HomePage()),
-                        );
                       }
                     },
                   ),

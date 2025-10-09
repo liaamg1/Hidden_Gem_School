@@ -131,8 +131,12 @@ class ProfilePage extends StatelessWidget {
                                 if (!context.mounted) {
                                   return;
                                 }
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FriendsPage(),
+                                  ),
+                                );
                               }
                             },
                             child: const Text("Remove Friend"),
