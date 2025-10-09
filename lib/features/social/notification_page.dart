@@ -88,14 +88,14 @@ class _NotificationPageState extends State<NotificationPage> {
                                   .doc(currentUser!.uid)
                                   .collection('friends')
                                   .doc(fromUserId)
-                                  .set({});
+                                  .set({'color': 4278190335});
 
                               await FirebaseFirestore.instance
                                   .collection('users')
                                   .doc(fromUserId)
                                   .collection('friends')
                                   .doc(currentUser!.uid)
-                                  .set({});
+                                  .set({'color': 4278190335});
                             },
                             child: const Text("Accept"),
                           ),

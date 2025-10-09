@@ -38,7 +38,7 @@ class _UploadPageState extends State<UploadPage> {
     if (pickedImages.length <= maxNrOfPictures - currentNrOfPictures) {
       setState(() {
         currentNrOfPictures += pickedImages.length;
-        _imageList = pickedImages.map((picked) => File(picked.path)).toList();
+        _imageList.addAll(pickedImages.map((picked) => File(picked.path)));
       });
     } else {
       if (!context.mounted) {
