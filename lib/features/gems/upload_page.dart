@@ -4,9 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
+import 'package:hidden_gems_new/features/home/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadPage extends StatefulWidget {
@@ -36,9 +37,20 @@ class _UploadPageState extends State<UploadPage> {
     if (pickedImages.isEmpty) return;
 
     if (pickedImages.length <= maxNrOfPictures - currentNrOfPictures) {
+      List<File> compressedImages = [];
+      for (var picked in pickedImages) {
+        final targetPath = '${picked.path}_compressed.jpg';
+        final compressedFile = await testCompressAndGetFile(
+          File(picked.path),
+          targetPath,
+        );
+        if (compressedFile != null) {
+          compressedImages.add(compressedFile);
+        }
+      }
       setState(() {
-        currentNrOfPictures += pickedImages.length;
-        _imageList.addAll(pickedImages.map((picked) => File(picked.path)));
+        currentNrOfPictures += compressedImages.length;
+        _imageList.addAll(compressedImages);
       });
     } else {
       if (!context.mounted) {
@@ -58,9 +70,15 @@ class _UploadPageState extends State<UploadPage> {
     if (pickedFile == null) return;
 
     if (maxNrOfPictures > _imageList.length) {
+      final targetPath = '${pickedFile.path}_compressed.jpg';
+      final compressedFile = await testCompressAndGetFile(
+        File(pickedFile.path),
+        targetPath,
+      );
+
       setState(() {
         currentNrOfPictures += 1;
-        _imageList.add(File(pickedFile.path));
+        _imageList.add(compressedFile!);
       });
     } else {
       if (!context.mounted) {
@@ -122,6 +140,19 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
+  //Compress code from https://pub.dev/packages/flutter_image_compress but modified
+  Future<File?> testCompressAndGetFile(File file, String targetPath) async {
+    final xfile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 20,
+    );
+
+    if (xfile == null) {
+      return null;
+    }
+    return File(xfile.path);
+  }
   //Took code from https://pub.dev/packages/geolocator, I would have written it the same way, so I saved time.
 
   Future<Position> _determinePosition() async {
@@ -173,15 +204,19 @@ class _UploadPageState extends State<UploadPage> {
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-    List<String> photoURL = [];
-    for (int i = 0; i < _imageList.length; i++) {
-      final storageRef = FirebaseStorage.instance.ref().child(
-        "uploaded_pictures/${postID.id}_$i.jpg",
-      );
-      await storageRef.putFile(_imageList[i]);
-      final url = await storageRef.getDownloadURL();
-      photoURL.add(url);
-    }
+    final photoURL = await Future.wait(
+      _imageList.asMap().entries.map((entry) async {
+        final i = entry.key;
+        final file = entry.value;
+
+        final storageRef = FirebaseStorage.instance.ref().child(
+          "uploaded_pictures/${postID}_$i.jpg",
+        );
+
+        await storageRef.putFile(file);
+        return await storageRef.getDownloadURL();
+      }),
+    );
     await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -390,12 +425,9 @@ class _UploadPageState extends State<UploadPage> {
                         if (!context.mounted) {
                           return;
                         }
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SavedGemsPage(userId: currentUser),
-                          ),
+                          MaterialPageRoute(builder: (_) => HomePage()),
                         );
                       }
                     },
