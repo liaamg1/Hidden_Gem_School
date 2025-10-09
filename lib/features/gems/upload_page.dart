@@ -152,6 +152,7 @@ class _UploadPageState extends State<UploadPage> {
     }
     return File(xfile.path);
   }
+
   //Took code from https://pub.dev/packages/geolocator, I would have written it the same way, so I saved time.
 
   Future<Position> _determinePosition() async {

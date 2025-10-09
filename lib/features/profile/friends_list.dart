@@ -95,7 +95,7 @@ class _FriendsPageState extends State<FriendsPage> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () async {
-                    final removed = await Navigator.pushReplacement(
+                    final removed = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProfilePage(userId: friend['id']),

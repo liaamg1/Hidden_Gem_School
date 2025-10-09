@@ -45,9 +45,10 @@ class SettingsPage extends StatelessWidget {
                 if (!context.mounted) {
                   return;
                 }
-                Navigator.push(
+                Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
                 );
               },
               child: const Text("Logout"),
