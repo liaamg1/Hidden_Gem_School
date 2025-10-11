@@ -45,7 +45,9 @@ app.*.map.json
 /android/app/release
 /android/app/google-services.json
 *.env
-android/app/src/main/AndroidManifest.xml
+
+# To be sure that it is not uploaded
+/android/local.properties
 
 #ios
 /ios/Runner/GoogleService-Info.plist
