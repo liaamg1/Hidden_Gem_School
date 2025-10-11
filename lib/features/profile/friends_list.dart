@@ -98,7 +98,11 @@ class _FriendsPageState extends State<FriendsPage> {
                     final removed = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfilePage(userId: friend['id']),
+                        builder: (context) => ProfilePage(
+                          userId: FirebaseAuth.instance.currentUser!.uid,
+                          auth: FirebaseAuth.instance,
+                          firestore: FirebaseFirestore.instance,
+                        ),
                       ),
                     );
 

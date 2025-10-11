@@ -26,12 +26,20 @@ Future<void> unfollowUser(friend) async {
 
 class ProfilePage extends StatelessWidget {
   final String userId;
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
-  ProfilePage({super.key, required this.userId});
-  final currentUser = FirebaseAuth.instance.currentUser;
+  const ProfilePage({
+    super.key,
+    //Added these to be able to unit test
+    required this.userId,
+    required this.auth,
+    required this.firestore,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = auth.currentUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -50,10 +58,7 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .snapshots(),
+        stream: firestore.collection('users').doc(userId).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: Text("Loading..."));
@@ -66,8 +71,14 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 80),
                 CircleAvatar(
                   radius: 70,
-                  backgroundImage: NetworkImage(data['photoURL']),
+                  backgroundImage: (data['photoURL'] ?? '').isNotEmpty
+                      ? NetworkImage(data['photoURL'])
+                      : null,
+                  child: (data['photoURL'] ?? '').isEmpty
+                      ? const Icon(Icons.person, size: 70)
+                      : null,
                 ),
+
                 const SizedBox(height: 15),
                 Text(
                   data['name'] ?? "Anonymous",

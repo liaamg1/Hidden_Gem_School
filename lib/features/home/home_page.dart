@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hidden_gems_new/features/social/notification_page.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
+  HomePage({super.key});
+  final currentUser = FirebaseAuth.instance;
+  final firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +19,10 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => NotificationPage()),
+                MaterialPageRoute(
+                  builder: (_) =>
+                      NotificationPage(auth: currentUser, firestore: firestore),
+                ),
               );
             },
           ),

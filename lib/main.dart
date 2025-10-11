@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final String? userId;
+
+  const MyHomePage({super.key, this.userId});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -50,13 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    final String userID = FirebaseAuth.instance.currentUser!.uid;
     pages = [
       //Const for stateless, not const for stateful
-      const HomePage(),
+      HomePage(),
       MapPage(latitude: 56.16156, longitude: 15.58661),
       UploadPage(),
-      ProfilePage(userId: userID),
+      ProfilePage(
+        userId: FirebaseAuth.instance.currentUser!.uid,
+        auth: FirebaseAuth.instance,
+        firestore: FirebaseFirestore.instance,
+      ),
     ];
   }
 

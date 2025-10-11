@@ -3,14 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+  const NotificationPage({
+    super.key,
+    required this.auth,
+    required this.firestore,
+  });
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  final currentUser = FirebaseAuth.instance.currentUser;
+  late final currentUser = widget.auth.currentUser;
   late final String? currentEmail;
 
   @override
@@ -20,7 +26,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   Stream<QuerySnapshot> loadRequests() {
-    return FirebaseFirestore.instance
+    return widget.firestore
         .collection('friend_invites')
         .where('to', isEqualTo: currentEmail)
         .where('status', isEqualTo: 'pending')
@@ -68,8 +74,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
-                              final fromUserQuery = await FirebaseFirestore
-                                  .instance
+                              final fromUserQuery = await widget.firestore
                                   .collection('users')
                                   .where('email', isEqualTo: invite['from'])
                                   .limit(1)
@@ -78,19 +83,19 @@ class _NotificationPageState extends State<NotificationPage> {
                               if (fromUserQuery.docs.isEmpty) return;
                               final fromUserId = fromUserQuery.docs.first.id;
 
-                              await FirebaseFirestore.instance
+                              await widget.firestore
                                   .collection('friend_invites')
                                   .doc(invite.id)
                                   .update({'status': 'accepted'});
 
-                              await FirebaseFirestore.instance
+                              await widget.firestore
                                   .collection('users')
                                   .doc(currentUser!.uid)
                                   .collection('friends')
                                   .doc(fromUserId)
                                   .set({'color': 4278190335});
 
-                              await FirebaseFirestore.instance
+                              await widget.firestore
                                   .collection('users')
                                   .doc(fromUserId)
                                   .collection('friends')
@@ -106,7 +111,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () async {
-                              await FirebaseFirestore.instance
+                              await widget.firestore
                                   .collection('friend_invites')
                                   .doc(invite.id)
                                   .update({'status': 'rejected'});
