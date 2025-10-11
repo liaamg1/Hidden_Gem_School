@@ -99,7 +99,7 @@ class _FriendsPageState extends State<FriendsPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ProfilePage(
-                          userId: FirebaseAuth.instance.currentUser!.uid,
+                          userId: friend['id'],
                           auth: FirebaseAuth.instance,
                           firestore: FirebaseFirestore.instance,
                         ),

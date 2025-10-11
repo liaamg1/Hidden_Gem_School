@@ -5,8 +5,8 @@ import 'package:hidden_gems_new/features/profile/friends_list.dart';
 import 'package:hidden_gems_new/features/gems/saved_gems_page.dart';
 import 'package:hidden_gems_new/features/profile/setting_page.dart';
 
-Future<void> unfollowUser(friend) async {
-  final currentUid = FirebaseAuth.instance.currentUser?.uid;
+Future<void> unfollowUser(FirebaseAuth auth, String friend) async {
+  final currentUid = auth.currentUser?.uid;
   if (currentUid == null) return;
 
   await FirebaseFirestore.instance
@@ -138,7 +138,7 @@ class ProfilePage extends StatelessWidget {
                               );
 
                               if (confirm == true) {
-                                await unfollowUser(userId);
+                                await unfollowUser(auth, userId);
                                 if (!context.mounted) {
                                   return;
                                 }
@@ -158,8 +158,11 @@ class ProfilePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  SavedGemsPage(userId: userId),
+                              builder: (context) => SavedGemsPage(
+                                userId: userId,
+                                auth: FirebaseAuth.instance,
+                                firestore: FirebaseFirestore.instance,
+                              ),
                             ),
                           );
                         },

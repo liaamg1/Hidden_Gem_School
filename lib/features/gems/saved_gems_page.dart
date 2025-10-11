@@ -7,20 +7,27 @@ import 'package:hidden_gems_new/features/gems/map_page.dart';
 
 class SavedGemsPage extends StatefulWidget {
   final String userId;
-  const SavedGemsPage({super.key, required this.userId});
+  final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
+  const SavedGemsPage({
+    super.key,
+    required this.userId,
+    required this.auth,
+    required this.firestore,
+  });
 
   @override
   State<SavedGemsPage> createState() => _SavedGemsPageState();
 }
 
 class _SavedGemsPageState extends State<SavedGemsPage> {
-  final user = FirebaseAuth.instance.currentUser;
+  late final user = widget.auth.currentUser;
   List<Map<String, dynamic>> items = [];
   bool isInitialized = false;
   Future<void> getSavedGems() async {
     List<Map<String, dynamic>> tempList = [];
 
-    var data = await FirebaseFirestore.instance
+    var data = await widget.firestore
         .collection('users')
         .doc(widget.userId)
         .collection('posts')

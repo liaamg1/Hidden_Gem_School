@@ -5,7 +5,7 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:hidden_gems_new/features/profile/profile_page.dart';
 
 //Followed documentation from https://pub.dev/packages/fake_cloud_firestore and different youtube videos
-
+//Also  https://pub.dev/packages/firebase_auth_mocks
 void main() {
   testWidgets('ProfilePage shows user data', (WidgetTester tester) async {
     final mockUser = MockUser(
